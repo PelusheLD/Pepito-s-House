@@ -7,13 +7,17 @@ import Dashboard from "@/components/admin/dashboard";
 import MenuManagement from "@/components/admin/menu-management";
 import SiteSettings from "@/components/admin/site-settings";
 import ChangePassword from "@/components/admin/change-password";
+import StaffManagement from "@/components/admin/staff-management";
+import UserManagement from "@/components/admin/user-management";
 import { 
   LayoutDashboard, 
   UtensilsCrossed, 
   Settings, 
   Lock, 
   LogOut,
-  Menu
+  Menu,
+  Users,
+  UserCog
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -47,7 +51,7 @@ export default function AdminPage() {
       setLocation("/admin-aut/change-password");
     } else if (params?.section) {
       // Si no estamos en una sección válida, redirigir al dashboard
-      const validSections = ["dashboard", "menu", "settings", "change-password"];
+      const validSections = ["dashboard", "menu", "settings", "change-password", "staff", "users"];
       if (validSections.includes(params.section)) {
         setActiveTab(params.section);
       } else {
@@ -75,6 +79,8 @@ export default function AdminPage() {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5 mr-2" /> },
     { id: "menu", label: "Gestión de Menú", icon: <UtensilsCrossed className="h-5 w-5 mr-2" /> },
+    { id: "staff", label: "Gestión de Personal", icon: <Users className="h-5 w-5 mr-2" /> },
+    { id: "users", label: "Administrar Usuarios", icon: <UserCog className="h-5 w-5 mr-2" /> },
     { id: "settings", label: "Configuración", icon: <Settings className="h-5 w-5 mr-2" /> },
     { id: "change-password", label: "Cambiar Contraseña", icon: <Lock className="h-5 w-5 mr-2" /> }
   ];
@@ -210,6 +216,14 @@ export default function AdminPage() {
             
             <TabsContent value="settings">
               <SiteSettings />
+            </TabsContent>
+            
+            <TabsContent value="staff">
+              <StaffManagement />
+            </TabsContent>
+            
+            <TabsContent value="users">
+              <UserManagement />
             </TabsContent>
             
             <TabsContent value="change-password">

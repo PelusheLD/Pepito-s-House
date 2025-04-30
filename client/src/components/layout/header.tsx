@@ -37,20 +37,15 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
     <header className={`sticky top-0 z-50 ${
       isScrolled ? "bg-white shadow-md" : "bg-white shadow-sm"
     } transition-all duration-300`}>
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center relative">
-        {/* Logo a la izquierda */}
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <img 
             src={logo} 
             alt={`${restaurantName} Logo`} 
             className="h-12 w-auto mr-3 rounded-full shadow object-cover" 
           />
-        </Link>
-        
-        {/* Título centrado */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
           <h1 className="text-2xl font-display font-bold text-primary">{restaurantName}</h1>
-        </div>
+        </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
