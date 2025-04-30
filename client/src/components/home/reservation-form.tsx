@@ -81,7 +81,7 @@ export default function ReservationForm() {
         },
         body: JSON.stringify({
           ...data,
-          date: format(data.date, "yyyy-MM-dd'T'HH:mm:ss"),
+          date: data.date.toISOString(),
         }),
       });
 
