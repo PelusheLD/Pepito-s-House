@@ -37,15 +37,20 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
     <header className={`sticky top-0 z-50 ${
       isScrolled ? "bg-white shadow-md" : "bg-white shadow-sm"
     } transition-all duration-300`}>
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center relative">
+        {/* Logo a la izquierda */}
         <Link href="/" className="flex items-center">
           <img 
             src={logo} 
             alt={`${restaurantName} Logo`} 
             className="h-12 w-auto mr-3 rounded-full shadow object-cover" 
           />
-          <h1 className="text-2xl font-display font-bold text-primary">{restaurantName}</h1>
         </Link>
+        
+        {/* Título centrado */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 text-center">
+          <h1 className="text-2xl font-display font-bold text-primary">{restaurantName}</h1>
+        </div>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
@@ -63,13 +68,15 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
           </a>
           <Button 
             onClick={openCart}
-            className="bg-primary text-white hover:bg-primary/90 transition-colors"
+            className="bg-primary text-white hover:bg-primary/90 transition-colors relative"
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
             <span>Carrito</span>
-            <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {totalItems}
-            </span>
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
           </Button>
         </nav>
 
@@ -82,9 +89,11 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
             onClick={openCart}
           >
             <ShoppingCart className="h-5 w-5" />
-            <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-              {totalItems}
-            </span>
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
           </Button>
           
           <Button 
