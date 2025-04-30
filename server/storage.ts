@@ -1,4 +1,4 @@
-import { users, menuItems, categories, staff, settings, locations, socialMedia } from "@shared/schema";
+import { users, menuItems, categories, staff, settings, locations, socialMedia, reservations } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 import type { 
@@ -67,6 +67,14 @@ export interface IStorage {
   createSocialMedia(social: InsertSocialMedia): Promise<SocialMedia>;
   updateSocialMedia(id: number, updates: Partial<SocialMedia>): Promise<SocialMedia>;
   deleteSocialMedia(id: number): Promise<void>;
+  
+  // Reservation methods
+  getReservations(): Promise<Reservation[]>;
+  getReservationById(id: number): Promise<Reservation | undefined>;
+  getReservationsByStatus(status: string): Promise<Reservation[]>;
+  createReservation(reservation: InsertReservation): Promise<Reservation>;
+  updateReservation(id: number, updates: Partial<Reservation>): Promise<Reservation>;
+  deleteReservation(id: number): Promise<void>;
   
   // Session store
   sessionStore: any; // Use 'any' to avoid the type error for now
@@ -338,6 +346,38 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSocialMedia(id: number): Promise<void> {
     await db.delete(socialMedia).where(eq(socialMedia.id, id));
+  }
+
+  // Reservation methods
+  async getReservations(): Promise<Reservation[]> {
+    return db.select().from(reservations).orderBy(desc(reservations.createdAt));
+  }
+
+  async getReservationById(id: number): Promise<Reservation | undefined> {
+    const [reservation] = await db.select().from(reservations).where(eq(reservations.id, id));
+    return reservation;
+  }
+
+  async getReservationsByStatus(status: string): Promise<Reservation[]> {
+    return db.select().from(reservations).where(eq(reservations.status, status)).orderBy(desc(reservations.createdAt));
+  }
+
+  async createReservation(reservation: InsertReservation): Promise<Reservation> {
+    const [newReservation] = await db.insert(reservations).values(reservation).returning();
+    return newReservation;
+  }
+
+  async updateReservation(id: number, updates: Partial<Reservation>): Promise<Reservation> {
+    const [updatedReservation] = await db
+      .update(reservations)
+      .set(updates)
+      .where(eq(reservations.id, id))
+      .returning();
+    return updatedReservation;
+  }
+
+  async deleteReservation(id: number): Promise<void> {
+    await db.delete(reservations).where(eq(reservations.id, id));
   }
 }
 

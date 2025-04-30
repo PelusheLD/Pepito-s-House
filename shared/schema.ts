@@ -130,3 +130,25 @@ export type InsertLocation = z.infer<typeof insertLocationSchema>;
 
 export type SocialMedia = typeof socialMedia.$inferSelect;
 export type InsertSocialMedia = z.infer<typeof insertSocialMediaSchema>;
+
+// Reservations
+export const reservations = pgTable("reservations", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
+  date: timestamp("date").notNull(),
+  time: text("time").notNull(),
+  guests: integer("guests").notNull(),
+  message: text("message"),
+  status: text("status").notNull().default("pending"), // pending, confirmed, in-progress, completed, cancelled
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const insertReservationSchema = createInsertSchema(reservations).omit({
+  id: true,
+  createdAt: true
+});
+
+export type Reservation = typeof reservations.$inferSelect;
+export type InsertReservation = z.infer<typeof insertReservationSchema>;
