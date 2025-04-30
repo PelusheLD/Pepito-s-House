@@ -29,10 +29,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Si el usuario es administrador, mostrar todos los platos incluso los no disponibles
       if (req.isAuthenticated() && req.user.role === 'admin') {
+        console.log("User is admin, fetching ALL menu items including unavailable ones");
         const menuItems = await storage.getAllMenuItems();
         return res.json(menuItems);
       } else {
         // Para usuarios normales, solo mostrar los disponibles
+        console.log("User is NOT admin or not authenticated, only showing available items");
         const menuItems = await storage.getMenuItems();
         return res.json(menuItems);
       }

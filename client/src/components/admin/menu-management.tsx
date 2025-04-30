@@ -235,6 +235,31 @@ export default function MenuManagement() {
     },
   });
 
+  // Toggle Availability Mutation
+  const toggleAvailabilityMutation = useMutation({
+    mutationFn: async (item: MenuItem) => {
+      const res = await apiRequest("PUT", `/api/menu-items/${item.id}`, { 
+        isAvailable: !item.isAvailable 
+      });
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/menu-items"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/menu-items/featured"] });
+      toast({
+        title: "Estado actualizado",
+        description: "La disponibilidad del plato ha sido actualizada correctamente.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `No se pudo actualizar la disponibilidad: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete Category Mutation
   const deleteCategoryMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -478,24 +503,7 @@ export default function MenuManagement() {
                                 : `¿Deseas marcar "${item.name}" como DISPONIBLE? Se mostrará en el menú.`
                             );
                             if (res) {
-                              // Llamar al API para cambiar disponibilidad
-                              apiRequest("PUT", `/api/menu-items/${item.id}`, { 
-                                isAvailable: !item.isAvailable 
-                              })
-                              .then(() => {
-                                queryClient.invalidateQueries({ queryKey: ["/api/menu-items"] });
-                                toast({
-                                  title: "Estado actualizado",
-                                  description: `${item.name} ahora está ${!item.isAvailable ? "disponible" : "no disponible"}.`
-                                });
-                              })
-                              .catch(error => {
-                                toast({
-                                  title: "Error",
-                                  description: `No se pudo actualizar la disponibilidad: ${error.message}`,
-                                  variant: "destructive"
-                                });
-                              });
+                              toggleAvailabilityMutation.mutate(item);
                             }
                           }}
                         >
