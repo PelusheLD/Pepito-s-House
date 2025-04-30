@@ -298,9 +298,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users", isAdmin, async (req, res) => {
     try {
       const users = await storage.getAllUsers();
-      res.json(users);
+      // Verificar que hemos obtenido los usuarios correctamente
+      console.log("Users found:", users.length);
+      return res.json(users);
     } catch (error) {
-      res.status(500).json({ message: "Error fetching users" });
+      console.error("Error fetching users:", error);
+      return res.status(500).json({ message: "Error fetching users" });
     }
   });
 
