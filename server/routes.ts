@@ -27,10 +27,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Menu items routes
   app.get("/api/menu-items", async (req, res) => {
     try {
-      const menuItems = await storage.getMenuItems();
-      res.json(menuItems);
+      // Si el usuario es administrador, mostrar todos los platos incluso los no disponibles
+      if (req.isAuthenticated() && req.user.role === 'admin') {
+        const menuItems = await storage.getAllMenuItems();
+        return res.json(menuItems);
+      } else {
+        // Para usuarios normales, solo mostrar los disponibles
+        const menuItems = await storage.getMenuItems();
+        return res.json(menuItems);
+      }
     } catch (error) {
-      res.status(500).json({ message: "Error fetching menu items" });
+      console.error("Error fetching menu items:", error);
+      return res.status(500).json({ message: "Error fetching menu items" });
     }
   });
 

@@ -29,6 +29,7 @@ export interface IStorage {
   
   // Menu item methods
   getMenuItems(): Promise<MenuItem[]>;
+  getAllMenuItems(): Promise<MenuItem[]>; // Obtiene todos los platos, incluso los no disponibles
   getMenuItemById(id: number): Promise<MenuItem | undefined>;
   getFeaturedMenuItems(): Promise<MenuItem[]>;
   getMenuItemsByCategory(categoryId: number): Promise<MenuItem[]>;
@@ -148,6 +149,12 @@ export class DatabaseStorage implements IStorage {
     return db.select()
       .from(menuItems)
       .where(eq(menuItems.isAvailable, true))
+      .orderBy(desc(menuItems.isFeatured));
+  }
+
+  async getAllMenuItems(): Promise<MenuItem[]> {
+    return db.select()
+      .from(menuItems)
       .orderBy(desc(menuItems.isFeatured));
   }
 
