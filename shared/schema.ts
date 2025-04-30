@@ -145,10 +145,19 @@ export const reservations = pgTable("reservations", {
   createdAt: timestamp("created_at").defaultNow()
 });
 
-export const insertReservationSchema = createInsertSchema(reservations).omit({
-  id: true,
-  createdAt: true
+// Crea un schema de Zod personalizado para validar reservas
+const reservationZodSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  date: z.string(), // Aceptar fecha como string
+  time: z.string(),
+  guests: z.number().int().positive(),
+  message: z.string().optional(),
+  status: z.string().optional()
 });
+
+export const insertReservationSchema = reservationZodSchema;
 
 export type Reservation = typeof reservations.$inferSelect;
 export type InsertReservation = z.infer<typeof insertReservationSchema>;

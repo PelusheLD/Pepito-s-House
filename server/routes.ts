@@ -428,7 +428,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/reservations", async (req, res) => {
     try {
+      // Validar los datos con nuestro schema personalizado
       const validatedData = insertReservationSchema.parse(req.body);
+      
+      // El manejo de la fecha se realiza en el método storage.createReservation
       const newReservation = await storage.createReservation(validatedData);
       
       // Aquí podríamos implementar la integración con WhatsApp para notificar
@@ -436,6 +439,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(201).json(newReservation);
     } catch (error) {
+      console.error("Error creating reservation:", error);
       res.status(400).json({ message: "Invalid reservation data", error });
     }
   });

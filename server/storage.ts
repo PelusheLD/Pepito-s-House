@@ -363,7 +363,11 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(reservations).where(eq(reservations.status, status)).orderBy(desc(reservations.createdAt));
   }
 
-  async createReservation(reservation: InsertReservation): Promise<Reservation> {
+  async createReservation(reservation: any): Promise<Reservation> {
+    // Nos aseguramos de que la fecha es un objeto Date válido
+    if (reservation.date && !(reservation.date instanceof Date)) {
+      reservation.date = new Date(reservation.date);
+    }
     const [newReservation] = await db.insert(reservations).values(reservation).returning();
     return newReservation;
   }
