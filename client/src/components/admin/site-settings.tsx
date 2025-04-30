@@ -165,8 +165,8 @@ export default function SiteSettings() {
 
   // Update settings mutation
   const settingsMutation = useMutation({
-    mutationFn: async (key: string, value: string) => {
-      const res = await apiRequest("PUT", `/api/settings/${key}`, { value });
+    mutationFn: async (params: { key: string, value: string }) => {
+      const res = await apiRequest("PUT", `/api/settings/${params.key}`, { value: params.value });
       return await res.json();
     }
   });
@@ -175,11 +175,11 @@ export default function SiteSettings() {
   const updateAllSettings = async (values: BasicSettingsFormValues) => {
     try {
       await Promise.all([
-        settingsMutation.mutateAsync("restaurantName", values.restaurantName),
-        settingsMutation.mutateAsync("restaurantLogo", values.restaurantLogo),
-        settingsMutation.mutateAsync("heroTitle", values.heroTitle),
-        settingsMutation.mutateAsync("heroSubtitle", values.heroSubtitle),
-        settingsMutation.mutateAsync("heroImage", values.heroImage)
+        settingsMutation.mutateAsync({ key: "restaurantName", value: values.restaurantName }),
+        settingsMutation.mutateAsync({ key: "restaurantLogo", value: values.restaurantLogo }),
+        settingsMutation.mutateAsync({ key: "heroTitle", value: values.heroTitle }),
+        settingsMutation.mutateAsync({ key: "heroSubtitle", value: values.heroSubtitle }),
+        settingsMutation.mutateAsync({ key: "heroImage", value: values.heroImage })
       ]);
       
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
