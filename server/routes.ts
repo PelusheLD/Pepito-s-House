@@ -2,7 +2,12 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, hashPassword } from "./auth";
-import { insertMenuItemSchema, insertCategorySchema, insertStaffSchema } from "@shared/schema";
+import { 
+  insertMenuItemSchema, 
+  insertCategorySchema, 
+  insertStaffSchema,
+  insertSocialMediaSchema
+} from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes (/api/register, /api/login, /api/logout, /api/user)
@@ -228,6 +233,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(updatedLocation);
     } catch (error) {
       res.status(500).json({ message: "Error updating location" });
+    }
+  });
+
+  // Social Media routes
+  app.get("/api/social-media", async (req, res) => {
+    try {
+      const socialMedias = await storage.getSocialMedias();
+      res.json(socialMedias);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching social media links" });
+    }
+  });
+
+  app.get("/api/social-media/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const socialMedia = await storage.getSocialMediaById(id);
+      if (!socialMedia) {
+        return res.status(404).json({ message: "Social media link not found" });
+      }
+      res.json(socialMedia);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching social media link" });
+    }
+  });
+
+  app.post("/api/social-media", isAdmin, async (req, res) => {
+    try {
+      const validatedData = insertSocialMediaSchema.parse(req.body);
+      const newSocialMedia = await storage.createSocialMedia(validatedData);
+      res.status(201).json(newSocialMedia);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid social media data", error });
+    }
+  });
+
+  app.put("/api/social-media/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const socialMedia = await storage.getSocialMediaById(id);
+      if (!socialMedia) {
+        return res.status(404).json({ message: "Social media link not found" });
+      }
+      
+      const updatedSocialMedia = await storage.updateSocialMedia(id, req.body);
+      res.json(updatedSocialMedia);
+    } catch (error) {
+      res.status(400).json({ message: "Error updating social media link", error });
+    }
+  });
+
+  app.delete("/api/social-media/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSocialMedia(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting social media link" });
     }
   });
 

@@ -576,7 +576,7 @@ export default function SiteSettings() {
                                     <li key={day} className="flex items-start">
                                       <Clock className="h-4 w-4 mr-2 text-primary mt-1" />
                                       <span className="font-medium">{day}:</span>
-                                      <span className="ml-1">{time}</span>
+                                      <span className="ml-1">{String(time)}</span>
                                     </li>
                                   ));
                                 } catch (e) {

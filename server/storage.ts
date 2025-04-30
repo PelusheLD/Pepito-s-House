@@ -66,15 +66,17 @@ export interface IStorage {
   deleteSocialMedia(id: number): Promise<void>;
   
   // Session store
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Use 'any' to avoid the type error for now
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Use 'any' to avoid the SessionStore type error
   
   constructor() {
+    // Use type assertion to avoid the Symbol indexing error
+    const pool = (db as any)[Symbol.for('neon.client')];
     this.sessionStore = new PostgresSessionStore({ 
-      pool: db[Symbol.for('neon.client')],
+      pool,
       createTableIfMissing: true 
     });
   }
@@ -280,6 +282,34 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return newLocation;
     }
+  }
+  
+  // Social Media methods
+  async getSocialMedias(): Promise<SocialMedia[]> {
+    return db.select().from(socialMedia);
+  }
+
+  async getSocialMediaById(id: number): Promise<SocialMedia | undefined> {
+    const [media] = await db.select().from(socialMedia).where(eq(socialMedia.id, id));
+    return media;
+  }
+
+  async createSocialMedia(social: InsertSocialMedia): Promise<SocialMedia> {
+    const [newSocial] = await db.insert(socialMedia).values(social).returning();
+    return newSocial;
+  }
+
+  async updateSocialMedia(id: number, updates: Partial<SocialMedia>): Promise<SocialMedia> {
+    const [updatedSocial] = await db
+      .update(socialMedia)
+      .set(updates)
+      .where(eq(socialMedia.id, id))
+      .returning();
+    return updatedSocial;
+  }
+
+  async deleteSocialMedia(id: number): Promise<void> {
+    await db.delete(socialMedia).where(eq(socialMedia.id, id));
   }
 }
 
