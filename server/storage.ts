@@ -94,6 +94,10 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users);
+  }
+
   async createUser(user: InsertUser): Promise<User> {
     const [newUser] = await db.insert(users).values(user).returning();
     return newUser;
@@ -106,6 +110,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return updatedUser;
+  }
+  
+  async deleteUser(id: number): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 
   async initializeDefaultAdmin(): Promise<void> {
@@ -137,7 +145,10 @@ export class DatabaseStorage implements IStorage {
   
   // Menu item methods
   async getMenuItems(): Promise<MenuItem[]> {
-    return db.select().from(menuItems).orderBy(desc(menuItems.isFeatured));
+    return db.select()
+      .from(menuItems)
+      .where(eq(menuItems.isAvailable, true))
+      .orderBy(desc(menuItems.isFeatured));
   }
 
   async getMenuItemById(id: number): Promise<MenuItem | undefined> {
@@ -146,11 +157,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getFeaturedMenuItems(): Promise<MenuItem[]> {
-    return db.select().from(menuItems).where(eq(menuItems.isFeatured, true));
+    return db.select().from(menuItems)
+      .where(and(
+        eq(menuItems.isFeatured, true),
+        eq(menuItems.isAvailable, true)
+      ));
   }
 
   async getMenuItemsByCategory(categoryId: number): Promise<MenuItem[]> {
-    return db.select().from(menuItems).where(eq(menuItems.categoryId, categoryId));
+    return db.select().from(menuItems)
+      .where(and(
+        eq(menuItems.categoryId, categoryId),
+        eq(menuItems.isAvailable, true)
+      ));
   }
 
   async createMenuItem(item: InsertMenuItem): Promise<MenuItem> {

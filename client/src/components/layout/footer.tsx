@@ -1,8 +1,9 @@
 import { Link } from "wouter";
-import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Linkedin, Youtube, Globe } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
-import { Location } from "@shared/schema";
+import { Location, SocialMedia } from "@shared/schema";
+import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaTiktok, FaPinterest, FaGlobe } from "react-icons/fa";
 
 type FooterProps = {
   logo: string;
@@ -14,6 +15,36 @@ export default function Footer({ logo, restaurantName }: FooterProps) {
     queryKey: ["/api/location"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  const { data: socialMedias = [] } = useQuery<SocialMedia[]>({
+    queryKey: ["/api/social-media"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  
+  // Filtrar solo redes sociales activas
+  const activeSocialMedia = socialMedias.filter(social => social.isActive);
+  
+  // Obtener el icono correcto según el nombre de la red social
+  const getSocialIcon = (iconName: string) => {
+    switch(iconName.toLowerCase()) {
+      case 'facebook':
+        return <FaFacebook className="h-5 w-5" />;
+      case 'instagram':
+        return <FaInstagram className="h-5 w-5" />;
+      case 'twitter':
+        return <FaTwitter className="h-5 w-5" />;
+      case 'linkedin':
+        return <FaLinkedin className="h-5 w-5" />;
+      case 'youtube':
+        return <FaYoutube className="h-5 w-5" />;
+      case 'tiktok':
+        return <FaTiktok className="h-5 w-5" />;
+      case 'pinterest':
+        return <FaPinterest className="h-5 w-5" />;
+      default:
+        return <FaGlobe className="h-5 w-5" />;
+    }
+  };
 
   return (
     <footer className="bg-neutral-900 text-white py-12">
@@ -32,15 +63,32 @@ export default function Footer({ logo, restaurantName }: FooterProps) {
               Experiencia culinaria única que combina la tradición con la innovación.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-white hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-white hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
+              {activeSocialMedia.length > 0 ? (
+                activeSocialMedia.map((social) => (
+                  <a 
+                    key={social.id} 
+                    href={social.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-white hover:text-primary transition-colors"
+                    title={social.name}
+                  >
+                    {getSocialIcon(social.icon)}
+                  </a>
+                ))
+              ) : (
+                <>
+                  <a href="#" className="text-white hover:text-primary transition-colors">
+                    <Facebook className="h-5 w-5" />
+                  </a>
+                  <a href="#" className="text-white hover:text-primary transition-colors">
+                    <Instagram className="h-5 w-5" />
+                  </a>
+                  <a href="#" className="text-white hover:text-primary transition-colors">
+                    <Twitter className="h-5 w-5" />
+                  </a>
+                </>
+              )}
             </div>
           </div>
           
