@@ -57,7 +57,7 @@ const staffFormSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
   position: z.string().min(2, "El cargo debe tener al menos 2 caracteres"),
   bio: z.string().min(10, "La biografía debe tener al menos 10 caracteres"),
-  imageUrl: z.string().url("La URL de la imagen no es válida").or(z.string().length(0)),
+  image: z.string().url("La URL de la imagen no es válida").or(z.string().length(0)),
 });
 
 type StaffFormValues = z.infer<typeof staffFormSchema>;
@@ -86,18 +86,18 @@ export default function StaffManagement() {
       name: "",
       position: "",
       bio: "",
-      imageUrl: "",
+      image: "",
     },
     values: selectedStaff ? {
       name: selectedStaff.name,
       position: selectedStaff.position,
       bio: selectedStaff.bio,
-      imageUrl: selectedStaff.imageUrl || "",
+      image: selectedStaff.image || "",
     } : {
       name: "",
       position: "",
       bio: "",
-      imageUrl: "",
+      image: "",
     }
   });
 
@@ -188,7 +188,7 @@ export default function StaffManagement() {
       name: "",
       position: "",
       bio: "",
-      imageUrl: "",
+      image: "",
     });
     setIsAddDialogOpen(true);
   };
@@ -269,9 +269,9 @@ export default function StaffManagement() {
               {staff.map((member) => (
                 <div key={member.id} className="flex flex-col sm:flex-row justify-between p-4 border rounded-lg hover:bg-accent/10 transition-colors">
                   <div className="flex items-center space-x-4">
-                    {member.imageUrl ? (
+                    {member.image ? (
                       <img
-                        src={member.imageUrl}
+                        src={member.image}
                         alt={member.name}
                         className="h-12 w-12 rounded-full object-cover"
                       />
@@ -409,7 +409,7 @@ export default function StaffManagement() {
 
               <FormField
                 control={form.control}
-                name="imageUrl"
+                name="image"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>URL de Imagen</FormLabel>
@@ -424,12 +424,12 @@ export default function StaffManagement() {
                 )}
               />
 
-              {form.watch("imageUrl") && (
+              {form.watch("image") && (
                 <div className="p-4 border rounded-md bg-accent/20">
                   <p className="text-sm font-medium mb-2">Vista previa de la imagen:</p>
                   <div className="flex items-center gap-4">
                     <img 
-                      src={form.watch("imageUrl")} 
+                      src={form.watch("image")} 
                       alt="Preview" 
                       className="h-16 w-16 rounded-full object-cover"
                     />
