@@ -46,10 +46,7 @@ import {
   UserCog,
   Trash2,
   Save,
-  UserRound,
-  ChefHat,
-  Coffee,
-  Utensils
+  UserRound
 } from "lucide-react";
 
 // Staff form schema
@@ -210,17 +207,7 @@ export default function StaffManagement() {
     }
   };
 
-  // Function to get icon based on position
-  const getPositionIcon = (position: string) => {
-    const lowerPos = position.toLowerCase();
-    if (lowerPos.includes('chef') || lowerPos.includes('cocina')) {
-      return <ChefHat className="h-4 w-4 mr-1" />;
-    } else if (lowerPos.includes('camarero') || lowerPos.includes('mesero') || lowerPos.includes('servicio')) {
-      return <Coffee className="h-4 w-4 mr-1" />;
-    } else {
-      return <Utensils className="h-4 w-4 mr-1" />;
-    }
-  };
+  // Eliminado el método getPositionIcon para no mostrar iconos al lado de los cargos
 
   return (
     <div className="space-y-6">
@@ -282,8 +269,7 @@ export default function StaffManagement() {
                     )}
                     <div>
                       <h3 className="font-medium">{member.name}</h3>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        {getPositionIcon(member.position)}
+                      <div className="text-sm text-muted-foreground">
                         {member.position}
                       </div>
                     </div>
