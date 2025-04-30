@@ -364,10 +364,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createReservation(reservation: any): Promise<Reservation> {
-    // Nos aseguramos de que la fecha es un objeto Date válido
-    if (reservation.date && !(reservation.date instanceof Date)) {
-      reservation.date = new Date(reservation.date);
+    // Transformamos la fecha de formato DD/MM/YYYY a un objeto Date válido
+    if (reservation.date && typeof reservation.date === 'string') {
+      try {
+        // Verificar si el formato es DD/MM/YYYY
+        if (reservation.date.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+          const [day, month, year] = reservation.date.split('/');
+          reservation.date = new Date(Number(year), Number(month) - 1, Number(day));
+        } else {
+          // Si no está en formato DD/MM/YYYY, intentar parsear directamente
+          reservation.date = new Date(reservation.date);
+        }
+      } catch (error) {
+        console.error("Error al convertir la fecha:", error);
+        throw new Error("Formato de fecha inválido");
+      }
     }
+    console.log("Guardando reservación con fecha:", reservation.date);
     const [newReservation] = await db.insert(reservations).values(reservation).returning();
     return newReservation;
   }

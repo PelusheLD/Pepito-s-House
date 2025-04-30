@@ -3,7 +3,7 @@ import { useCart } from "@/hooks/use-cart";
 import { MenuItem } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { formatPrice, truncateText } from "@/lib/utils";
-import { ShoppingCart, CircleDot } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import FoodItemDialog from "./food-item-dialog";
 import { cn } from "@/lib/utils";
 
@@ -42,13 +42,6 @@ export default function FoodItemCard({ item, featured = false }: FoodItemCardPro
         )}
         onClick={handleOrderNow}
       >
-        {/* Indicador de disponibilidad */}
-        <div className="absolute top-2 right-2 z-10">
-          <CircleDot className={cn(
-            "h-5 w-5",
-            isAvailable ? "text-green-500" : "text-red-500"
-          )} />
-        </div>
         
         <div className={featured ? "h-60 overflow-hidden" : "h-48 overflow-hidden"}>
           <img 

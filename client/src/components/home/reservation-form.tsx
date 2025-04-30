@@ -74,6 +74,9 @@ export default function ReservationForm() {
     try {
       setSubmitting(true);
       
+      // Formateamos la fecha en formato día/mes/año como pidió el usuario
+      const formattedDate = format(data.date, "dd/MM/yyyy");
+      
       const response = await fetch("/api/reservations", {
         method: "POST",
         headers: {
@@ -81,7 +84,7 @@ export default function ReservationForm() {
         },
         body: JSON.stringify({
           ...data,
-          date: data.date.toISOString(),
+          date: formattedDate, // Enviamos la fecha en formato dd/MM/yyyy
         }),
       });
 
