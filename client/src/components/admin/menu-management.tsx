@@ -469,6 +469,43 @@ export default function MenuManagement() {
                       <div className="flex items-center gap-2 mt-4 sm:mt-0">
                         <Button 
                           size="sm" 
+                          variant={item.isAvailable ? "destructive" : "outline"}
+                          className="flex-1 sm:flex-none"
+                          onClick={() => {
+                            const res = confirm(
+                              item.isAvailable 
+                                ? `¿Deseas marcar "${item.name}" como NO DISPONIBLE? No se mostrará en el menú.` 
+                                : `¿Deseas marcar "${item.name}" como DISPONIBLE? Se mostrará en el menú.`
+                            );
+                            if (res) {
+                              // Llamar al API para cambiar disponibilidad
+                              apiRequest("PUT", `/api/menu-items/${item.id}`, { 
+                                isAvailable: !item.isAvailable 
+                              })
+                              .then(() => {
+                                queryClient.invalidateQueries({ queryKey: ["/api/menu-items"] });
+                                toast({
+                                  title: "Estado actualizado",
+                                  description: `${item.name} ahora está ${!item.isAvailable ? "disponible" : "no disponible"}.`
+                                });
+                              })
+                              .catch(error => {
+                                toast({
+                                  title: "Error",
+                                  description: `No se pudo actualizar la disponibilidad: ${error.message}`,
+                                  variant: "destructive"
+                                });
+                              });
+                            }
+                          }}
+                        >
+                          {item.isAvailable 
+                            ? <><XCircle className="h-4 w-4 mr-1" /> No Disponible</>
+                            : <><CheckCircle className="h-4 w-4 mr-1" /> Disponible</>
+                          }
+                        </Button>
+                        <Button 
+                          size="sm" 
                           variant="outline" 
                           className="flex-1 sm:flex-none"
                           onClick={() => handleEditItem(item)}
