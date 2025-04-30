@@ -10,6 +10,7 @@ import ChangePassword from "@/components/admin/change-password";
 import StaffManagement from "@/components/admin/staff-management";
 import UserManagement from "@/components/admin/user-management";
 import SocialMediaManagement from "@/components/admin/social-media-management";
+import ReservationManagement from "@/components/admin/reservation-management";
 import { 
   LayoutDashboard, 
   UtensilsCrossed, 
@@ -19,7 +20,8 @@ import {
   Menu,
   Users,
   UserCog,
-  Share2
+  Share2,
+  CalendarCheck
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -53,7 +55,7 @@ export default function AdminPage() {
       setLocation("/admin-aut/change-password");
     } else if (params?.section) {
       // Si no estamos en una sección válida, redirigir al dashboard
-      const validSections = ["dashboard", "menu", "settings", "change-password", "staff", "users", "social-media"];
+      const validSections = ["dashboard", "menu", "settings", "change-password", "staff", "users", "social-media", "reservations"];
       if (validSections.includes(params.section)) {
         setActiveTab(params.section);
       } else {
@@ -81,6 +83,7 @@ export default function AdminPage() {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5 mr-2" /> },
     { id: "menu", label: "Gestión de Menú", icon: <UtensilsCrossed className="h-5 w-5 mr-2" /> },
+    { id: "reservations", label: "Reservas", icon: <CalendarCheck className="h-5 w-5 mr-2" /> },
     { id: "staff", label: "Gestión de Personal", icon: <Users className="h-5 w-5 mr-2" /> },
     { id: "users", label: "Administrar Usuarios", icon: <UserCog className="h-5 w-5 mr-2" /> },
     { id: "social-media", label: "Redes Sociales", icon: <Share2 className="h-5 w-5 mr-2" /> },
@@ -231,6 +234,10 @@ export default function AdminPage() {
             
             <TabsContent value="social-media">
               <SocialMediaManagement />
+            </TabsContent>
+            
+            <TabsContent value="reservations">
+              <ReservationManagement />
             </TabsContent>
             
             <TabsContent value="change-password">
