@@ -5,6 +5,7 @@ import MenuOfDay from "@/components/home/menu-of-day";
 import MenuSection from "@/components/home/menu-section";
 import LocationSection from "@/components/home/location-section";
 import TeamSection from "@/components/home/team-section";
+import ReservationSection from "@/components/home/reservation-section";
 import Cart from "@/components/cart";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -49,6 +50,7 @@ export default function HomePage() {
         <HeroSection />
         <MenuOfDay />
         <MenuSection />
+        <ReservationSection />
         <LocationSection />
         <TeamSection />
       </main>

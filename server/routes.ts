@@ -6,7 +6,8 @@ import {
   insertMenuItemSchema, 
   insertCategorySchema, 
   insertStaffSchema,
-  insertSocialMediaSchema
+  insertSocialMediaSchema,
+  insertReservationSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -389,6 +390,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Error deleting user" });
+    }
+  });
+
+  // Reservation routes
+  app.get("/api/reservations", isAdmin, async (req, res) => {
+    try {
+      const reservations = await storage.getReservations();
+      res.json(reservations);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching reservations" });
+    }
+  });
+
+  app.get("/api/reservations/status/:status", isAdmin, async (req, res) => {
+    try {
+      const status = req.params.status;
+      const reservations = await storage.getReservationsByStatus(status);
+      res.json(reservations);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching reservations by status" });
+    }
+  });
+
+  app.get("/api/reservations/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const reservation = await storage.getReservationById(id);
+      if (!reservation) {
+        return res.status(404).json({ message: "Reservation not found" });
+      }
+      res.json(reservation);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching reservation" });
+    }
+  });
+
+  app.post("/api/reservations", async (req, res) => {
+    try {
+      const validatedData = insertReservationSchema.parse(req.body);
+      const newReservation = await storage.createReservation(validatedData);
+      
+      // Aquí podríamos implementar la integración con WhatsApp para notificar
+      // al restaurante sobre la nueva reserva
+      
+      res.status(201).json(newReservation);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid reservation data", error });
+    }
+  });
+
+  app.put("/api/reservations/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const reservation = await storage.getReservationById(id);
+      if (!reservation) {
+        return res.status(404).json({ message: "Reservation not found" });
+      }
+      
+      const updatedReservation = await storage.updateReservation(id, req.body);
+      
+      // Si el estado ha cambiado, podríamos enviar una notificación por WhatsApp
+      if (reservation.status !== updatedReservation.status) {
+        // Implementar notificación por WhatsApp aquí
+      }
+      
+      res.json(updatedReservation);
+    } catch (error) {
+      res.status(400).json({ message: "Error updating reservation", error });
+    }
+  });
+
+  app.delete("/api/reservations/:id", isAdmin, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteReservation(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting reservation" });
     }
   });
 

@@ -8,7 +8,8 @@ import type {
   Staff, InsertStaff,
   Settings, InsertSettings,
   Location, InsertLocation,
-  SocialMedia, InsertSocialMedia
+  SocialMedia, InsertSocialMedia,
+  Reservation, InsertReservation
 } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
