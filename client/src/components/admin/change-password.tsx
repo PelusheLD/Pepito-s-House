@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
+import { queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -54,15 +55,18 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
     },
   });
 
-  // Reset form when success
+  // Reset form when success and handle redirection
   useEffect(() => {
     if (changePasswordMutation.isSuccess) {
       form.reset();
-      // If it was the first login, redirect to dashboard
+      
+      // Si era el primer inicio de sesión, redirigir al dashboard después de un breve retraso
       if (isFirstLogin) {
         setTimeout(() => {
+          // Forzar la actualización de la interfaz antes de redirigir
+          queryClient.invalidateQueries({ queryKey: ['/api/user'] });
           setLocation("/admin-aut/dashboard");
-        }, 2000);
+        }, 1500);
       }
     }
   }, [changePasswordMutation.isSuccess, form, isFirstLogin, setLocation]);

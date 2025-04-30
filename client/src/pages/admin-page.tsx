@@ -41,12 +41,23 @@ export default function AdminPage() {
   const restaurantLogo = getSettingValue("restaurantLogo") || "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww";
 
   useEffect(() => {
-    // If first login, force the change-password tab
+    // Si es primer inicio de sesión, forzar la pestaña de cambio de contraseña
     if (user?.isFirstLogin) {
       setActiveTab("change-password");
       setLocation("/admin-aut/change-password");
     } else if (params?.section) {
-      setActiveTab(params.section);
+      // Si no estamos en una sección válida, redirigir al dashboard
+      const validSections = ["dashboard", "menu", "settings", "change-password"];
+      if (validSections.includes(params.section)) {
+        setActiveTab(params.section);
+      } else {
+        setActiveTab("dashboard");
+        setLocation("/admin-aut/dashboard");
+      }
+    } else {
+      // Si no hay sección especificada, ir al dashboard por defecto
+      setActiveTab("dashboard");
+      setLocation("/admin-aut/dashboard");
     }
   }, [params, user, setLocation]);
 

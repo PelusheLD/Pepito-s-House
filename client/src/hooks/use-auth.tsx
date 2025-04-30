@@ -102,9 +102,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (data: ChangePasswordData) => {
-      await apiRequest("POST", "/api/change-password", data);
+      const res = await apiRequest("POST", "/api/change-password", data);
+      return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Actualizar el usuario en la caché con isFirstLogin: false
+      if (user) {
+        queryClient.setQueryData(["/api/user"], {
+          ...user,
+          isFirstLogin: false
+        });
+      }
+      
       toast({
         title: "Contraseña actualizada",
         description: "Tu contraseña ha sido actualizada correctamente.",

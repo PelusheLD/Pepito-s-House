@@ -127,6 +127,16 @@ export function setupAuth(app: Express) {
       isFirstLogin: false
     });
 
-    res.status(200).json({ message: "Password updated successfully" });
+    // Actualizar la sesión de usuario
+    req.login(updatedUser, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Error updating session", error: err.message });
+      }
+      
+      return res.status(200).json({ 
+        message: "Password updated successfully",
+        user: updatedUser
+      });
+    });
   });
 }
