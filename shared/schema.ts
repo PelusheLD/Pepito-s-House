@@ -98,6 +98,17 @@ export const locations = pgTable("locations", {
 
 export const insertLocationSchema = createInsertSchema(locations);
 
+// Social Media Links
+export const socialMedia = pgTable("social_media", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  icon: text("icon").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+});
+
+export const insertSocialMediaSchema = createInsertSchema(socialMedia);
+
 // Define types for the tables
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -116,3 +127,6 @@ export type InsertStaff = z.infer<typeof insertStaffSchema>;
 
 export type Location = typeof locations.$inferSelect;
 export type InsertLocation = z.infer<typeof insertLocationSchema>;
+
+export type SocialMedia = typeof socialMedia.$inferSelect;
+export type InsertSocialMedia = z.infer<typeof insertSocialMediaSchema>;

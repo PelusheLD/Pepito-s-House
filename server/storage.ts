@@ -1,4 +1,4 @@
-import { users, menuItems, categories, staff, settings, locations } from "@shared/schema";
+import { users, menuItems, categories, staff, settings, locations, socialMedia } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc } from "drizzle-orm";
 import type { 
@@ -7,7 +7,8 @@ import type {
   Category, InsertCategory,
   Staff, InsertStaff,
   Settings, InsertSettings,
-  Location, InsertLocation
+  Location, InsertLocation,
+  SocialMedia, InsertSocialMedia
 } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
@@ -56,6 +57,13 @@ export interface IStorage {
   // Location methods
   getLocation(): Promise<Location | undefined>;
   updateLocation(updates: Partial<Location>): Promise<Location>;
+  
+  // Social Media methods
+  getSocialMedias(): Promise<SocialMedia[]>;
+  getSocialMediaById(id: number): Promise<SocialMedia | undefined>;
+  createSocialMedia(social: InsertSocialMedia): Promise<SocialMedia>;
+  updateSocialMedia(id: number, updates: Partial<SocialMedia>): Promise<SocialMedia>;
+  deleteSocialMedia(id: number): Promise<void>;
   
   // Session store
   sessionStore: session.SessionStore;

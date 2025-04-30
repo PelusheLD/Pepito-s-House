@@ -489,9 +489,9 @@ export default function StaffManagement() {
             </DialogDescription>
           </DialogHeader>
           <div className="p-4 border rounded-md bg-destructive/10 flex items-center space-x-4">
-            {selectedStaff?.imageUrl ? (
+            {selectedStaff?.image ? (
               <img
-                src={selectedStaff.imageUrl}
+                src={selectedStaff.image}
                 alt={selectedStaff.name}
                 className="h-12 w-12 rounded-full object-cover"
               />
