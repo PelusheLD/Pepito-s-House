@@ -14,6 +14,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,6 +54,8 @@ const timeSlots = [
   "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
   "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"
 ];
+
+const phoneRegex = /^(0?4[0-9]{9}|0?4[0-9]{2}-[0-9]{7})$/;
 
 export default function ReservationForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -165,8 +168,21 @@ export default function ReservationForm() {
                   <FormItem>
                     <FormLabel>Teléfono</FormLabel>
                     <FormControl>
-                      <Input placeholder="Tu número de WhatsApp" {...field} />
+                      <Input 
+                        placeholder="Tu número de WhatsApp (ej: 04169809812)" 
+                        {...field}
+                        onChange={(e) => {
+                          // Eliminar todo excepto números y guiones
+                          const value = e.target.value.replace(/[^\d-]/g, '');
+                          // Limitar a 11 dígitos o formato con guión
+                          const formattedValue = value.length > 11 ? value.slice(0, 11) : value;
+                          field.onChange(formattedValue);
+                        }}
+                      />
                     </FormControl>
+                    <FormDescription>
+                      Ingresa tu número de WhatsApp venezolano (ej: 04169809812)
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

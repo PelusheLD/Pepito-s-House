@@ -1,26 +1,45 @@
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { Settings } from "@shared/schema";
 import ReservationForm from "./reservation-form";
 
 export default function ReservationSection() {
+  const { data: settings } = useQuery<Settings[]>({
+    queryKey: ["/api/settings"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  const getSettingValue = (key: string) => {
+    if (!settings) return "";
+    const setting = settings.find(s => s.key === key);
+    return setting ? setting.value : "";
+  };
+
+  const isReservationsEnabled = getSettingValue("isReservationsEnabled") === "true";
+  const title = getSettingValue("reservationTitle") || "¡Reserva tu Mesa en LLAMAS!";
+  const description = getSettingValue("reservationDescription") || "Asegura tu lugar en nuestro restaurante completando el siguiente formulario. Nuestro equipo se comunicará contigo para confirmar tu reserva y atender cualquier solicitud especial.";
+  const phoneText = getSettingValue("reservationPhoneText") || "¿Prefieres hacer tu reserva por teléfono? Llama al";
+  const confirmationText = getSettingValue("reservationConfirmationText") || "Recuerda que todas las reservas requieren confirmación. Te contactaremos vía WhatsApp para verificar los detalles.";
+
+  if (!isReservationsEnabled) return null;
+
   return (
-    <section id="reservas" className="py-20 bg-neutral-100">
+    <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-neutral-800 mb-3">
-            Reserva tu Mesa
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-display font-bold text-primary mb-4">
+            {title}
           </h2>
-          <p className="text-lg text-neutral-800/80 max-w-2xl mx-auto">
-            Reserva tu mesa con anticipación para garantizar la mejor experiencia gastronómica. 
-            Completa el formulario y nos pondremos en contacto contigo para confirmar tu reserva.
+          <p className="text-gray-600 mb-8">
+            {description}
           </p>
-        </div>
-        
-        <div className="max-w-4xl mx-auto">
+          
           <ReservationForm />
-        </div>
-        
-        <div className="mt-10 text-center text-sm text-neutral-600">
-          <p className="mb-2">También puedes hacer tu reserva llamando al <span className="font-semibold">(123) 456-7890</span></p>
-          <p>Las reservas requieren confirmación. Te contactaremos vía WhatsApp para confirmar tu reserva.</p>
+          
+          <div className="mt-8 text-gray-600">
+            <p className="mb-2">{phoneText}</p>
+            <p>{confirmationText}</p>
+          </div>
         </div>
       </div>
     </section>

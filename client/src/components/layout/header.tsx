@@ -49,17 +49,21 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="#inicio" className="text-neutral-800 hover:text-primary font-medium transition-colors">
+          <a href="#inicio" className="relative text-neutral-800 hover:text-primary font-medium transition-colors group">
             Inicio
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </a>
-          <a href="#menu" className="text-neutral-800 hover:text-primary font-medium transition-colors">
+          <a href="#menu" className="relative text-neutral-800 hover:text-primary font-medium transition-colors group">
             Menú
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </a>
-          <a href="#ubicacion" className="text-neutral-800 hover:text-primary font-medium transition-colors">
+          <a href="#ubicacion" className="relative text-neutral-800 hover:text-primary font-medium transition-colors group">
             Ubicación
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </a>
-          <a href="#nosotros" className="text-neutral-800 hover:text-primary font-medium transition-colors">
+          <a href="#nosotros" className="relative text-neutral-800 hover:text-primary font-medium transition-colors group">
             Nosotros
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </a>
           <Button 
             onClick={openCart}
@@ -112,31 +116,35 @@ export default function Header({ logo, restaurantName }: HeaderProps) {
             <div className="flex flex-col space-y-3">
               <a 
                 href="#inicio" 
-                className="text-neutral-800 hover:text-primary font-medium py-2 transition-colors"
+                className="relative text-neutral-800 hover:text-primary font-medium py-2 transition-colors group"
                 onClick={handleNavClick}
               >
                 Inicio
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </a>
               <a 
                 href="#menu" 
-                className="text-neutral-800 hover:text-primary font-medium py-2 transition-colors"
+                className="relative text-neutral-800 hover:text-primary font-medium py-2 transition-colors group"
                 onClick={handleNavClick}
               >
                 Menú
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </a>
               <a 
                 href="#ubicacion" 
-                className="text-neutral-800 hover:text-primary font-medium py-2 transition-colors"
+                className="relative text-neutral-800 hover:text-primary font-medium py-2 transition-colors group"
                 onClick={handleNavClick}
               >
                 Ubicación
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </a>
               <a 
                 href="#nosotros" 
-                className="text-neutral-800 hover:text-primary font-medium py-2 transition-colors"
+                className="relative text-neutral-800 hover:text-primary font-medium py-2 transition-colors group"
                 onClick={handleNavClick}
               >
                 Nosotros
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
               </a>
             </div>
           </div>

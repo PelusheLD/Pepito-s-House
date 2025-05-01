@@ -56,8 +56,19 @@ type Reservation = {
 
 // Función para obtener URL de WhatsApp para mensajes
 function getWhatsAppUrl(phone: string, message: string): string {
-  const formattedPhone = phone.startsWith("+") ? phone.substring(1) : phone;
-  return `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+  // Asegurarse de que el número tenga el formato correcto
+  let formattedPhone = phone.replace(/\D/g, ''); // Eliminar todo excepto números
+  
+  // Si no empieza con código de país, asumir que es de Venezuela (+58)
+  if (!formattedPhone.startsWith('58')) {
+    formattedPhone = '58' + formattedPhone;
+  }
+  
+  // Codificar el mensaje para URL
+  const encodedMessage = encodeURIComponent(message);
+  
+  // Construir la URL de WhatsApp
+  return `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
 }
 
 // Función para generar mensajes de confirmación de reserva
@@ -365,7 +376,7 @@ export default function ReservationManagement() {
             <Button variant="outline" onClick={() => setIsStatusDialogOpen(false)}>Cancelar</Button>
             <Button 
               onClick={confirmStatusChange}
-              disabled={updateStatusMutation.isPending || !newStatus || (selectedReservation && newStatus === selectedReservation.status)}
+              disabled={updateStatusMutation.isPending || !newStatus || (selectedReservation?.status === newStatus)}
             >
               {updateStatusMutation.isPending ? "Actualizando..." : "Guardar Cambios"}
             </Button>

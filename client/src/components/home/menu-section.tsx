@@ -9,19 +9,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function MenuSection() {
   const [activeCategory, setActiveCategory] = useState<string | null>("all");
 
-  const { data: menuItems, isLoading: isLoadingItems } = useQuery<MenuItem[]>({
-    queryKey: ["/api/menu-items"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
-  });
-
+  // Fetch categories
   const { data: categories, isLoading: isLoadingCategories } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
-  const filteredItems = menuItems?.filter(item => 
-    activeCategory === "all" || 
-    item.categoryId === parseInt(activeCategory || "0")
+  // Fetch menu items
+  const { data: menuItems, isLoading: isLoadingItems } = useQuery<MenuItem[]>({
+    queryKey: ["/api/menu-items"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  // Filtrar solo los platillos disponibles
+  const availableMenuItems = menuItems?.filter(item => item.isAvailable);
+
+  // Filter items based on active category
+  const filteredItems = availableMenuItems?.filter(item => 
+    activeCategory === "all" || item.categoryId?.toString() === activeCategory
   );
 
   return (

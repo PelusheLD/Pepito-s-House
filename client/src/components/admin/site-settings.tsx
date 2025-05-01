@@ -48,8 +48,10 @@ import {
   Image,
   Clock,
   Truck,
-  SquarePen
+  SquarePen,
+  CalendarCheck
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 // Basic settings schema
 const basicSettingsSchema = z.object({
@@ -57,7 +59,12 @@ const basicSettingsSchema = z.object({
   restaurantLogo: z.string().url("La URL del logo no es válida"),
   heroTitle: z.string().min(5, "El título debe tener al menos 5 caracteres"),
   heroSubtitle: z.string().min(10, "El subtítulo debe tener al menos 10 caracteres"),
-  heroImage: z.string().url("La URL de la imagen no es válida")
+  heroImage: z.string().url("La URL de la imagen no es válida"),
+  reservationTitle: z.string().min(5, "El título debe tener al menos 5 caracteres"),
+  reservationDescription: z.string().min(10, "La descripción debe tener al menos 10 caracteres"),
+  reservationPhoneText: z.string().min(5, "El texto debe tener al menos 5 caracteres"),
+  reservationConfirmationText: z.string().min(5, "El texto debe tener al menos 5 caracteres"),
+  isReservationsEnabled: z.boolean()
 });
 
 // Location schema
@@ -111,14 +118,24 @@ export default function SiteSettings() {
       restaurantLogo: "",
       heroTitle: "",
       heroSubtitle: "",
-      heroImage: ""
+      heroImage: "",
+      reservationTitle: "",
+      reservationDescription: "",
+      reservationPhoneText: "",
+      reservationConfirmationText: "",
+      isReservationsEnabled: true
     },
     values: {
       restaurantName: getSettingValue("restaurantName") || "LLAMAS!",
       restaurantLogo: getSettingValue("restaurantLogo") || "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww",
       heroTitle: getSettingValue("heroTitle") || "Una experiencia culinaria inolvidable",
       heroSubtitle: getSettingValue("heroSubtitle") || "Descubre nuestra propuesta gastronómica única, elaborada con los mejores ingredientes frescos y locales.",
-      heroImage: getSettingValue("heroImage") || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80"
+      heroImage: getSettingValue("heroImage") || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80",
+      reservationTitle: getSettingValue("reservationTitle") || "¡Reserva tu Mesa en LLAMAS!",
+      reservationDescription: getSettingValue("reservationDescription") || "Asegura tu lugar en nuestro restaurante completando el siguiente formulario. Nuestro equipo se comunicará contigo para confirmar tu reserva y atender cualquier solicitud especial.",
+      reservationPhoneText: getSettingValue("reservationPhoneText") || "¿Prefieres hacer tu reserva por teléfono? Llama al",
+      reservationConfirmationText: getSettingValue("reservationConfirmationText") || "Recuerda que todas las reservas requieren confirmación. Te contactaremos vía WhatsApp para verificar los detalles.",
+      isReservationsEnabled: getSettingValue("isReservationsEnabled") === "true"
     }
   });
 
@@ -179,7 +196,12 @@ export default function SiteSettings() {
         settingsMutation.mutateAsync({ key: "restaurantLogo", value: values.restaurantLogo }),
         settingsMutation.mutateAsync({ key: "heroTitle", value: values.heroTitle }),
         settingsMutation.mutateAsync({ key: "heroSubtitle", value: values.heroSubtitle }),
-        settingsMutation.mutateAsync({ key: "heroImage", value: values.heroImage })
+        settingsMutation.mutateAsync({ key: "heroImage", value: values.heroImage }),
+        settingsMutation.mutateAsync({ key: "reservationTitle", value: values.reservationTitle }),
+        settingsMutation.mutateAsync({ key: "reservationDescription", value: values.reservationDescription }),
+        settingsMutation.mutateAsync({ key: "reservationPhoneText", value: values.reservationPhoneText }),
+        settingsMutation.mutateAsync({ key: "reservationConfirmationText", value: values.reservationConfirmationText }),
+        settingsMutation.mutateAsync({ key: "isReservationsEnabled", value: String(values.isReservationsEnabled) })
       ]);
       
       queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
@@ -400,6 +422,112 @@ export default function SiteSettings() {
                               </div>
                             </div>
                           )}
+                        </AccordionContent>
+                      </AccordionItem>
+
+                      <AccordionItem value="reservation">
+                        <AccordionTrigger className="text-lg font-medium">
+                          <CalendarCheck className="h-5 w-5 mr-2" /> Sección de Reservas
+                        </AccordionTrigger>
+                        <AccordionContent className="space-y-4 pt-4">
+                          <FormField
+                            control={basicSettingsForm.control}
+                            name="isReservationsEnabled"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                  <FormLabel className="text-base">Mostrar Sección de Reservas</FormLabel>
+                                  <FormDescription>
+                                    Activa o desactiva la sección de reservas en la página principal
+                                  </FormDescription>
+                                </div>
+                                <FormControl>
+                                  <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={basicSettingsForm.control}
+                            name="reservationTitle"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Título de la Sección</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="¡Reserva tu Mesa en LLAMAS!" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                  Título principal de la sección de reservas.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={basicSettingsForm.control}
+                            name="reservationDescription"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Descripción</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Asegura tu lugar en nuestro restaurante..." 
+                                    {...field} 
+                                    className="resize-none"
+                                    rows={3}
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  Texto descriptivo que aparece debajo del título.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={basicSettingsForm.control}
+                            name="reservationPhoneText"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Texto del Teléfono</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="¿Prefieres hacer tu reserva por teléfono? Llama al" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                  Texto que aparece antes del número de teléfono.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={basicSettingsForm.control}
+                            name="reservationConfirmationText"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Texto de Confirmación</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Recuerda que todas las reservas requieren confirmación..." 
+                                    {...field} 
+                                    className="resize-none"
+                                    rows={2}
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  Texto que aparece después del formulario de reservas.
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>

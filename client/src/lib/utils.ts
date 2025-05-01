@@ -28,19 +28,6 @@ export function getPlaceholderImage(type: 'food' | 'person' | 'restaurant' = 'fo
   return placeholders[type];
 }
 
-// Get URL for WhatsApp with formatted message
-export function getWhatsAppUrl(items: Array<{ name: string; price: number; quantity: number }>, totalPrice: number): string {
-  let message = 'Hola, quiero hacer un pedido:%0A%0A';
-  
-  items.forEach(item => {
-    message += `${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}%0A`;
-  });
-  
-  message += `%0ATotal: $${totalPrice.toFixed(2)}`;
-  
-  return `https://wa.me/1234567890?text=${message}`;
-}
-
 // Function to slugify text
 export function slugify(text: string): string {
   return text

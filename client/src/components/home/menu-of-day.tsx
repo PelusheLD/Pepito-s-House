@@ -10,6 +10,9 @@ export default function MenuOfDay() {
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
 
+  // Filtrar solo los platillos destacados que estén disponibles
+  const availableFeaturedItems = featuredItems?.filter(item => item.isAvailable);
+
   return (
     <section id="menu-del-dia" className="py-16 bg-secondary/20">
       <div className="container mx-auto px-4">
@@ -42,8 +45,8 @@ export default function MenuOfDay() {
                 </div>
               </div>
             ))
-          ) : featuredItems && featuredItems.length > 0 ? (
-            featuredItems.map((item) => (
+          ) : availableFeaturedItems && availableFeaturedItems.length > 0 ? (
+            availableFeaturedItems.map((item) => (
               <FoodItemCard key={item.id} item={item} featured />
             ))
           ) : (

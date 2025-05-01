@@ -149,7 +149,7 @@ export const reservations = pgTable("reservations", {
 const reservationZodSchema = z.object({
   name: z.string(),
   email: z.string().email(),
-  phone: z.string(),
+  phone: z.string().regex(/^(0?4[0-9]{9}|0?4[0-9]{2}-[0-9]{7})$/, "El número de teléfono debe ser un número venezolano válido (ej: 04169809812 o 0416-9809812)"),
   date: z.string(), // Aceptar fecha como string
   time: z.string(),
   guests: z.number().int().positive(),

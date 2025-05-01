@@ -98,6 +98,7 @@ export default function MenuManagement() {
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState<boolean>(false);
   const [itemToDelete, setItemToDelete] = useState<MenuItem | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [itemToToggle, setItemToToggle] = useState<MenuItem | null>(null);
 
   // Fetch menu items
   const { 
@@ -496,16 +497,7 @@ export default function MenuManagement() {
                           size="sm" 
                           variant={item.isAvailable ? "destructive" : "outline"}
                           className="flex-1 sm:flex-none"
-                          onClick={() => {
-                            const res = confirm(
-                              item.isAvailable 
-                                ? `¿Deseas marcar "${item.name}" como NO DISPONIBLE? No se mostrará en el menú.` 
-                                : `¿Deseas marcar "${item.name}" como DISPONIBLE? Se mostrará en el menú.`
-                            );
-                            if (res) {
-                              toggleAvailabilityMutation.mutate(item);
-                            }
-                          }}
+                          onClick={() => setItemToToggle(item)}
                         >
                           {item.isAvailable 
                             ? <><XCircle className="h-4 w-4 mr-1" /> No Disponible</>
@@ -928,6 +920,45 @@ export default function MenuManagement() {
                 </>
               ) : (
                 "Eliminar"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Toggle Availability Alert Dialog */}
+      <AlertDialog open={!!itemToToggle} onOpenChange={(open) => !open && setItemToToggle(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {itemToToggle?.isAvailable 
+                ? `¿Marcar como No Disponible?` 
+                : `¿Marcar como Disponible?`}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {itemToToggle?.isAvailable 
+                ? `El plato "${itemToToggle.name}" no se mostrará en el menú.` 
+                : `El plato "${itemToToggle?.name}" se mostrará en el menú.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (itemToToggle) {
+                  toggleAvailabilityMutation.mutate(itemToToggle);
+                  setItemToToggle(null);
+                }
+              }}
+              className={itemToToggle?.isAvailable ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}
+            >
+              {toggleAvailabilityMutation.isPending ? (
+                <>
+                  <div className="spinner h-4 w-4 mr-2 animate-spin border-2 border-current border-t-transparent rounded-full" />
+                  Actualizando...
+                </>
+              ) : (
+                itemToToggle?.isAvailable ? "Marcar como No Disponible" : "Marcar como Disponible"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,6 +1,15 @@
 import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 import { MenuItem } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+
+interface Location {
+  phone: string;
+  address: string;
+  email: string;
+  // ... otros campos que pueda tener location
+}
 
 export type CartItem = {
   id: number;
@@ -28,6 +37,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+  
+  const { data: location } = useQuery<Location>({
+    queryKey: ["/api/location"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
   
   // Load cart from localStorage on component mount
   useEffect(() => {
@@ -104,6 +118,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const checkout = () => {
+    if (!location?.phone) {
+      toast({
+        title: "Error",
+        description: "No se ha configurado un número de WhatsApp para realizar pedidos",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Format WhatsApp message
     let message = 'Hola, quiero hacer un pedido:%0A%0A';
     
@@ -113,8 +136,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     
     message += `%0ATotal: $${totalPrice.toFixed(2)}`;
     
+    // Format phone number for WhatsApp
+    const formattedPhone = location.phone.replace(/\D/g, '');
+    
     // Open WhatsApp with formatted message
-    window.open(`https://wa.me/1234567890?text=${message}`, '_blank');
+    window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
     
     // Optionally clear cart after checkout
     // clearCart();

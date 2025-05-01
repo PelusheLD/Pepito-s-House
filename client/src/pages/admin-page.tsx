@@ -26,6 +26,20 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { Settings as SiteSettingsType } from "@shared/schema";
+import { Badge } from "@/components/ui/badge";
+
+type Reservation = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  time: string;
+  guests: number;
+  message: string | null;
+  status: string;
+  createdAt: string;
+};
 
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
@@ -38,6 +52,13 @@ export default function AdminPage() {
     queryKey: ["/api/settings"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  const { data: reservations } = useQuery<Reservation[]>({
+    queryKey: ["/api/reservations"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  const pendingReservations = reservations?.filter((r: Reservation) => r.status === "pending") || [];
 
   const getSettingValue = (key: string) => {
     if (!settings) return "";
@@ -83,7 +104,16 @@ export default function AdminPage() {
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5 mr-2" /> },
     { id: "menu", label: "Gestión de Menú", icon: <UtensilsCrossed className="h-5 w-5 mr-2" /> },
-    { id: "reservations", label: "Reservas", icon: <CalendarCheck className="h-5 w-5 mr-2" /> },
+    { 
+      id: "reservations", 
+      label: "Reservas", 
+      icon: <CalendarCheck className="h-5 w-5 mr-2" />,
+      badge: pendingReservations.length > 0 ? (
+        <Badge variant="destructive" className="ml-2">
+          {pendingReservations.length}
+        </Badge>
+      ) : null
+    },
     { id: "staff", label: "Gestión de Personal", icon: <Users className="h-5 w-5 mr-2" /> },
     { id: "users", label: "Administrar Usuarios", icon: <UserCog className="h-5 w-5 mr-2" /> },
     { id: "social-media", label: "Redes Sociales", icon: <Share2 className="h-5 w-5 mr-2" /> },
@@ -152,6 +182,7 @@ export default function AdminPage() {
                   >
                     {item.icon}
                     {item.label}
+                    {item.badge}
                   </Button>
                 </li>
               ))}
@@ -183,6 +214,7 @@ export default function AdminPage() {
                     >
                       {item.icon}
                       {item.label}
+                      {item.badge}
                     </Button>
                   </li>
                 ))}
@@ -221,7 +253,9 @@ export default function AdminPage() {
             </TabsContent>
             
             <TabsContent value="settings">
-              <SiteSettings />
+              <div className="space-y-6">
+                <SiteSettings />
+              </div>
             </TabsContent>
             
             <TabsContent value="staff">
