@@ -181,7 +181,6 @@ export default function ReservationForm() {
                       />
                     </FormControl>
                     <FormDescription>
-                      Ingresa tu número de WhatsApp venezolano (ej: 04169809812)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
