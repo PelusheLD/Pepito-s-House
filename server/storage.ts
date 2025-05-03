@@ -82,14 +82,15 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: any; // Use 'any' to avoid the SessionStore type error
-  
+  sessionStore: any;
+
   constructor() {
-    // Use type assertion to avoid the Symbol indexing error
-    const pool = (db as any)[Symbol.for('neon.client')];
-    this.sessionStore = new PostgresSessionStore({ 
-      pool,
-      createTableIfMissing: true 
+    this.sessionStore = new PostgresSessionStore({
+      pool: db.$client,
+      tableName: 'sessions',
+      createTableIfMissing: true,
+      ttl: 24 * 60 * 60, // 24 hours
+      pruneSessionInterval: 60 * 60, // 1 hour
     });
   }
   

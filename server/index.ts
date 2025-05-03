@@ -3,6 +3,8 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
 import cors from "cors";
+import path from "path";
+import { type Server } from "http";
 
 const app = express();
 app.use(cors({
@@ -56,10 +58,20 @@ async function initApp() {
     throw err;
   });
 
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
+  if (process.env.NODE_ENV === 'production') {
+    // Servir archivos estáticos en producción
+    app.use(express.static(path.join(process.cwd(), 'dist/client')));
+    
+    // Manejar rutas del cliente para SPA
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(process.cwd(), 'dist/client/index.html'));
+    });
   } else {
-    serveStatic(app);
+    // Configuración de desarrollo con Vite
+    const httpServer = app.listen(3000, () => {
+      log('serving on port 3000');
+    });
+    await setupVite(app, httpServer);
   }
 
   return app;
@@ -71,7 +83,7 @@ const appPromise = initApp();
 // Exportar el manejador para Vercel
 export default async function handler(req: Request, res: Response) {
   const app = await appPromise;
-  return app(req, res);
+  app(req, res);
 }
 
 // Solo iniciar el servidor en desarrollo
