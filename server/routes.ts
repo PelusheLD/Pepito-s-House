@@ -1,14 +1,14 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
-import { setupAuth, hashPassword } from "./auth";
+import { storage } from "./storage.js";
+import { setupAuth, hashPassword } from "./auth.js";
 import { 
   insertMenuItemSchema, 
   insertCategorySchema, 
   insertStaffSchema,
   insertSocialMediaSchema,
   insertReservationSchema
-} from "@shared/schema";
+} from "../shared/schema.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes (/api/register, /api/login, /api/logout, /api/user)

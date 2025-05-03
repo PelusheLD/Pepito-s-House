@@ -1,5 +1,5 @@
-import { users, menuItems, categories, staff, settings, locations, socialMedia, reservations } from "@shared/schema";
-import { db } from "./db";
+import { users, menuItems, categories, staff, settings, locations, socialMedia, reservations } from "../shared/schema.js";
+import { db } from "./db.js";
 import { eq, and, desc } from "drizzle-orm";
 import type { 
   User, InsertUser, 
@@ -10,10 +10,10 @@ import type {
   Location, InsertLocation,
   SocialMedia, InsertSocialMedia,
   Reservation, InsertReservation
-} from "@shared/schema";
+} from "../shared/schema.js";
 import connectPg from "connect-pg-simple";
 import session from "express-session";
-import { hashPassword } from "./auth";
+import { hashPassword } from "./auth.js";
 
 // Setup PostgreSQL session store
 const PostgresSessionStore = connectPg(session);
@@ -363,25 +363,30 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(reservations).where(eq(reservations.status, status)).orderBy(desc(reservations.createdAt));
   }
 
-  async createReservation(reservation: any): Promise<Reservation> {
-    // Transformamos la fecha de formato DD/MM/YYYY a un objeto Date válido
+  async createReservation(reservation: InsertReservation): Promise<Reservation> {
+    let dateValue: Date;
+
     if (reservation.date && typeof reservation.date === 'string') {
       try {
-        // Verificar si el formato es DD/MM/YYYY
         if (reservation.date.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
           const [day, month, year] = reservation.date.split('/');
-          reservation.date = new Date(Number(year), Number(month) - 1, Number(day));
+          dateValue = new Date(Number(year), Number(month) - 1, Number(day));
         } else {
-          // Si no está en formato DD/MM/YYYY, intentar parsear directamente
-          reservation.date = new Date(reservation.date);
+          dateValue = new Date(reservation.date);
         }
       } catch (error) {
         console.error("Error al convertir la fecha:", error);
         throw new Error("Formato de fecha inválido");
       }
+    } else if (typeof reservation.date === 'object' && reservation.date !== null) {
+      dateValue = reservation.date as Date;
+    } else {
+      throw new Error("El campo 'date' es obligatorio y debe ser una fecha válida");
     }
-    console.log("Guardando reservación con fecha:", reservation.date);
-    const [newReservation] = await db.insert(reservations).values(reservation).returning();
+
+    const fixedReservation = { ...reservation, date: dateValue } as Omit<InsertReservation, "date"> & { date: Date };
+    console.log("Guardando reservación con fecha:", fixedReservation.date);
+    const [newReservation] = await db.insert(reservations).values(fixedReservation).returning();
     return newReservation;
   }
 
