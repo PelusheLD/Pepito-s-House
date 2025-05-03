@@ -78,7 +78,7 @@ export default function LocationSection() {
                       <li key={day} className="flex items-start">
                         <Clock className="h-4 w-4 mr-2 text-primary mt-1" />
                         <span className="font-medium">{day}:</span>
-                        <span className="ml-1">{time}</span>
+                        <span className="ml-1">{time as string}</span>
                       </li>
                     ))
                   ) : (
@@ -118,7 +118,7 @@ export default function LocationSection() {
           )}
           
           <div className="h-96 bg-neutral-200 rounded-xl overflow-hidden shadow-lg">
-            {location?.mapCoordinates ? (
+            {(location?.mapCoordinates ? (
               <iframe
                 src={`https://maps.google.com/maps?q=${location.mapCoordinates}&z=18&output=embed`}
                 width="100%"
@@ -138,7 +138,7 @@ export default function LocationSection() {
                   </p>
                 </div>
               </div>
-            )}
+            )) as React.ReactNode}
           </div>
         </div>
       </div>
