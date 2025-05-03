@@ -68,8 +68,9 @@ async function initApp() {
     });
   } else {
     // Configuración de desarrollo con Vite
-    const httpServer = app.listen(3000, () => {
-      log('serving on port 3000');
+    const port = process.env.PORT || 3000;
+    const httpServer = app.listen(port, () => {
+      log(`serving on port ${port}`);
     });
     await setupVite(app, httpServer);
   }
@@ -84,14 +85,4 @@ const appPromise = initApp();
 export default async function handler(req: Request, res: Response) {
   const app = await appPromise;
   app(req, res);
-}
-
-// Solo iniciar el servidor en desarrollo
-if (process.env.NODE_ENV === "development") {
-  appPromise.then(app => {
-    const port = 3000;
-    app.listen(port, () => {
-      log(`serving on port ${port}`);
-    });
-  });
 }

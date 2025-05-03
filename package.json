@@ -10,7 +10,9 @@
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "clean": "rm -rf dist",
     "check": "tsc",
-    "vercel-build": "npm run build"
+    "vercel-build": "npm run build",
+    "vercel:dev": "vercel dev",
+    "preview": "npx serve dist/client"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
