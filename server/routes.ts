@@ -13,8 +13,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
   // Menu items routes
   app.get("/api/menu-items", async (req, res) => {
     try {
-      const menuItems = await storage.getMenuItems();
-      return res.json(menuItems);
+        const menuItems = await storage.getMenuItems();
+        return res.json(menuItems);
     } catch (error) {
       console.error("Error fetching menu items:", error);
       return res.status(500).json({ message: "Error fetching menu items" });

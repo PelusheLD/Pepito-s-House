@@ -70,8 +70,8 @@ async function initApp() {
     // Configuración de desarrollo con Vite
     const port = process.env.PORT || 3000;
     const httpServer = app.listen(port, () => {
-      log(`serving on port ${port}`);
-    });
+    log(`serving on port ${port}`);
+  });
     await setupVite(app, httpServer);
   }
 
