@@ -12,7 +12,9 @@
     "check": "tsc",
     "vercel-build": "npm run build",
     "vercel:dev": "vercel dev",
-    "preview": "npx serve dist/client"
+    "preview": "npx serve dist/client",
+    "postinstall": "rm -rf node_modules/rollup/dist/native.js"
+
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -110,5 +112,8 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  }
+  },
+  "resolutions": {
+  "rollup": "^3.29.4"
+}
 }
