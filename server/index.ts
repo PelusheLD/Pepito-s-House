@@ -6,7 +6,9 @@ import cors from "cors";
 
 const app = express();
 app.use(cors({
-  origin: "http://localhost:3000", // Cambia el puerto si tu frontend corre en otro
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : "http://localhost:3000",
   credentials: true
 }));
 app.use(express.json());
@@ -42,7 +44,8 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
+// Función para inicializar la aplicación
+async function initApp() {
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -53,20 +56,30 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 3000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 3000;
-  server.listen(port, () => {
-    log(`serving on port ${port}`);
+  return app;
+}
+
+// Inicializar la aplicación
+const appPromise = initApp();
+
+// Exportar el manejador para Vercel
+export default async function handler(req: Request, res: Response) {
+  const app = await appPromise;
+  return app(req, res);
+}
+
+// Solo iniciar el servidor en desarrollo
+if (process.env.NODE_ENV === "development") {
+  appPromise.then(app => {
+    const port = 3000;
+    app.listen(port, () => {
+      log(`serving on port ${port}`);
+    });
   });
-})();
+}
