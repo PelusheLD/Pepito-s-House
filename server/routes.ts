@@ -449,5 +449,36 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
+  // Endpoint de login
+  app.post("/api/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await storage.getUserByUsername(username);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
+    }
+
+    // Aquí podrías crear la sesión/cookie si usas sesiones
+    // req.session.userId = user.id;
+
+    // No devuelvas la contraseña
+    const { password: _, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+  });
+
+  // Endpoint para obtener el usuario autenticado
+  app.get("/api/user", async (req, res) => {
+    // Si tuvieras sesiones, aquí buscarías el usuario por req.session.userId
+    // Por ahora, devuelve null (no autenticado)
+    res.json(null);
+  });
+
+  // Endpoint para cerrar sesión
+  app.post("/api/logout", (req, res) => {
+    // Si tuvieras sesiones, aquí destruirías la sesión
+    // req.session.destroy();
+    res.status(200).json({ message: "Sesión cerrada" });
+  });
+
   return app;
 }
