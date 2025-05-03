@@ -11,12 +11,6 @@ import type {
   SocialMedia, InsertSocialMedia,
   Reservation, InsertReservation
 } from "../shared/schema.js";
-import connectPg from "connect-pg-simple";
-import session from "express-session";
-import { hashPassword } from "./auth.js";
-
-// Setup PostgreSQL session store
-const PostgresSessionStore = connectPg(session);
 
 export interface IStorage {
   // User methods
@@ -76,22 +70,10 @@ export interface IStorage {
   createReservation(reservation: InsertReservation): Promise<Reservation>;
   updateReservation(id: number, updates: Partial<Reservation>): Promise<Reservation>;
   deleteReservation(id: number): Promise<void>;
-  
-  // Session store
-  sessionStore: any; // Use 'any' to avoid the type error for now
 }
 
 export class DatabaseStorage implements IStorage {
-  sessionStore: any;
-
   constructor() {
-    this.sessionStore = new PostgresSessionStore({
-      pool: db.$client,
-      tableName: 'sessions',
-      createTableIfMissing: false,
-      ttl: 24 * 60 * 60, // 24 hours
-      pruneSessionInterval: 60 * 60, // 1 hour
-    });
   }
   
   // User methods
@@ -130,7 +112,7 @@ export class DatabaseStorage implements IStorage {
   async initializeDefaultAdmin(): Promise<void> {
     const existingAdmin = await this.getUserByUsername("admin");
     if (!existingAdmin) {
-      const hashedPassword = await hashPassword("admin123");
+      const hashedPassword = "admin123";
       await this.createUser({
         username: "admin",
         password: hashedPassword,

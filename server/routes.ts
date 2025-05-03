@@ -1,7 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
-import { setupAuth, hashPassword } from "./auth.js";
 import { 
   insertMenuItemSchema, 
   insertCategorySchema, 
@@ -11,34 +10,11 @@ import {
 } from "../shared/schema.js";
 
 export async function registerRoutes(app: Express): Promise<Express> {
-  // Setup authentication routes (/api/register, /api/login, /api/logout, /api/user)
-  setupAuth(app);
-
-  // Middleware to check if user is authenticated and is admin
-  const isAdmin = (req: Request, res: Response, next: Function) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
-    if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Not authorized" });
-    }
-    next();
-  };
-
   // Menu items routes
   app.get("/api/menu-items", async (req, res) => {
     try {
-      // Si el usuario es administrador, mostrar todos los platos incluso los no disponibles
-      if (req.isAuthenticated() && req.user.role === 'admin') {
-        console.log("User is admin, fetching ALL menu items including unavailable ones");
-        const menuItems = await storage.getAllMenuItems();
-        return res.json(menuItems);
-      } else {
-        // Para usuarios normales, solo mostrar los disponibles
-        console.log("User is NOT admin or not authenticated, only showing available items");
-        const menuItems = await storage.getMenuItems();
-        return res.json(menuItems);
-      }
+      const menuItems = await storage.getMenuItems();
+      return res.json(menuItems);
     } catch (error) {
       console.error("Error fetching menu items:", error);
       return res.status(500).json({ message: "Error fetching menu items" });
@@ -67,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/menu-items", isAdmin, async (req, res) => {
+  app.post("/api/menu-items", async (req, res) => {
     try {
       const validatedData = insertMenuItemSchema.parse(req.body);
       const newMenuItem = await storage.createMenuItem(validatedData);
@@ -77,7 +53,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/menu-items/:id", isAdmin, async (req, res) => {
+  app.put("/api/menu-items/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const menuItem = await storage.getMenuItemById(id);
@@ -92,7 +68,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/menu-items/:id", isAdmin, async (req, res) => {
+  app.delete("/api/menu-items/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteMenuItem(id);
@@ -112,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/categories", isAdmin, async (req, res) => {
+  app.post("/api/categories", async (req, res) => {
     try {
       const validatedData = insertCategorySchema.parse(req.body);
       const newCategory = await storage.createCategory(validatedData);
@@ -122,7 +98,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/categories/:id", isAdmin, async (req, res) => {
+  app.put("/api/categories/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const category = await storage.getCategoryById(id);
@@ -137,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/categories/:id", isAdmin, async (req, res) => {
+  app.delete("/api/categories/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteCategory(id);
@@ -157,7 +133,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/staff", isAdmin, async (req, res) => {
+  app.post("/api/staff", async (req, res) => {
     try {
       const validatedData = insertStaffSchema.parse(req.body);
       const newStaffMember = await storage.createStaffMember(validatedData);
@@ -167,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/staff/:id", isAdmin, async (req, res) => {
+  app.put("/api/staff/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const staffMember = await storage.getStaffMemberById(id);
@@ -182,7 +158,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/staff/:id", isAdmin, async (req, res) => {
+  app.delete("/api/staff/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteStaffMember(id);
@@ -214,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/settings/:key", isAdmin, async (req, res) => {
+  app.put("/api/settings/:key", async (req, res) => {
     try {
       const { value } = req.body;
       if (!value) {
@@ -238,7 +214,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/location", isAdmin, async (req, res) => {
+  app.put("/api/location", async (req, res) => {
     try {
       const updatedLocation = await storage.updateLocation(req.body);
       res.json(updatedLocation);
@@ -270,7 +246,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/social-media", isAdmin, async (req, res) => {
+  app.post("/api/social-media", async (req, res) => {
     try {
       const validatedData = insertSocialMediaSchema.parse(req.body);
       const newSocialMedia = await storage.createSocialMedia(validatedData);
@@ -280,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/social-media/:id", isAdmin, async (req, res) => {
+  app.put("/api/social-media/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const socialMedia = await storage.getSocialMediaById(id);
@@ -295,7 +271,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/social-media/:id", isAdmin, async (req, res) => {
+  app.delete("/api/social-media/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteSocialMedia(id);
@@ -306,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
   });
 
   // User management routes
-  app.get("/api/users", isAdmin, async (req, res) => {
+  app.get("/api/users", async (req, res) => {
     try {
       const users = await storage.getAllUsers();
       // Verificar que hemos obtenido los usuarios correctamente
@@ -318,7 +294,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/users", isAdmin, async (req, res) => {
+  app.post("/api/users", async (req, res) => {
     try {
       const { username, password } = req.body;
       
@@ -329,10 +305,9 @@ export async function registerRoutes(app: Express): Promise<Express> {
       }
       
       // Create new user
-      const hashedPassword = await hashPassword(password);
       const newUser = await storage.createUser({
         username,
-        password: hashedPassword,
+        password,
         isFirstLogin: true,
         role: "admin"
       });
@@ -345,7 +320,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.post("/api/users/:id/reset-password", isAdmin, async (req, res) => {
+  app.post("/api/users/:id/reset-password", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { password } = req.body;
@@ -359,9 +334,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      const hashedPassword = await hashPassword(password);
       await storage.updateUser(id, {
-        password: hashedPassword,
+        password,
         isFirstLogin: true
       });
       
@@ -371,7 +345,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/users/:id", isAdmin, async (req, res) => {
+  app.delete("/api/users/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       
@@ -394,7 +368,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
   });
 
   // Reservation routes
-  app.get("/api/reservations", isAdmin, async (req, res) => {
+  app.get("/api/reservations", async (req, res) => {
     try {
       const reservations = await storage.getReservations();
       res.json(reservations);
@@ -403,7 +377,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.get("/api/reservations/status/:status", isAdmin, async (req, res) => {
+  app.get("/api/reservations/status/:status", async (req, res) => {
     try {
       const status = req.params.status;
       const reservations = await storage.getReservationsByStatus(status);
@@ -413,7 +387,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.get("/api/reservations/:id", isAdmin, async (req, res) => {
+  app.get("/api/reservations/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const reservation = await storage.getReservationById(id);
@@ -444,7 +418,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.put("/api/reservations/:id", isAdmin, async (req, res) => {
+  app.put("/api/reservations/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const reservation = await storage.getReservationById(id);
@@ -465,7 +439,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  app.delete("/api/reservations/:id", isAdmin, async (req, res) => {
+  app.delete("/api/reservations/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       await storage.deleteReservation(id);
