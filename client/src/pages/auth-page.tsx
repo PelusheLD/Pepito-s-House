@@ -32,7 +32,11 @@ export default function AuthPage() {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user && !isLoading) {
-      setLocation(user.isFirstLogin ? "/admin-aut/change-password" : "/admin-aut/dashboard");
+      if (user.isFirstLogin) {
+        setLocation("/admin-aut/change-password");
+      } else {
+        setLocation("/admin-aut/dashboard");
+      }
     }
   }, [user, isLoading, setLocation]);
 
