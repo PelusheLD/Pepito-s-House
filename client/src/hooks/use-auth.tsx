@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Contraseña actualizada",
         description: "Tu contraseña ha sido actualizada correctamente.",
       });
-      setLocation("/");
+      setLocation("/admin-aut/dashboard");
     },
     onError: (error: Error) => {
       console.error("Error al cambiar contraseña:", error);
@@ -134,8 +134,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (user?.isFirstLogin && !pathname.includes("/change-password")) {
-      setLocation("/change-password");
+    if (user?.isFirstLogin && !pathname.includes("/admin-aut/change-password")) {
+      setLocation("/admin-aut/change-password");
     }
   }, [user, pathname, setLocation]);
 

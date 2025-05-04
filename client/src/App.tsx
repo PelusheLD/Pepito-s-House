@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/home-page";
@@ -15,7 +15,10 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={HomePage} />
-      <Route path="/admin-aut" component={AuthPage} />
+      <Route path="/auth" component={AuthPage} />
+      <Route path="/admin-aut">
+        <Redirect to="/auth" />
+      </Route>
       <ProtectedRoute path="/admin-aut/:section" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
