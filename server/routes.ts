@@ -499,7 +499,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
       return res.status(401).json({ message: "Contraseña actual incorrecta" });
     }
     await storage.updateUser(dbUser.id, { password: newPassword, isFirstLogin: false });
-    res.status(200).json({ message: "Contraseña actualizada correctamente" });
+    const updatedUser = await storage.getUserByUsername(user.username);
+    res.status(200).json(updatedUser);
   });
 
   return app;
