@@ -12,6 +12,14 @@ export const users = pgTable("users", {
   role: text("role").notNull().default("admin"),
 });
 
+// Default admin user
+export const defaultAdmin = {
+  username: "admin",
+  password: "admin123",
+  isFirstLogin: true,
+  role: "admin",
+} as const;
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,

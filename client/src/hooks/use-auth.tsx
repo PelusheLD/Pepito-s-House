@@ -113,12 +113,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (data) => {
-      // Actualizar el usuario en la caché con isFirstLogin: false
+      console.log("Usuario antes de actualizar:", user);
       if (user) {
-        queryClient.setQueryData(["/api/user"], {
+        const updatedUser = {
           ...user,
           isFirstLogin: false
-        });
+        };
+        console.log("Usuario actualizado:", updatedUser);
+        queryClient.setQueryData(["/api/user"], updatedUser);
+        
+        // Forzar una actualización de la caché
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       }
       
       toast({
@@ -127,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
     onError: (error: Error) => {
+      console.error("Error al cambiar contraseña:", error);
       toast({
         title: "Error al cambiar la contraseña",
         description: error.message || "No se pudo actualizar la contraseña.",

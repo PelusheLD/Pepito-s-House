@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && npm run build:backend",
+    "build": "vite build && npm run build:backend && tsx server/create-admin.ts",
     "build:backend": "tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "clean": "rm -rf dist",
@@ -17,7 +17,10 @@
     "vercel-build": "npm run build",
     "vercel:dev": "vercel dev",
     "preview": "npx serve dist/client",
-    "postinstall": "rm -rf node_modules/rollup/dist/native.js"
+    "postinstall": "rm -rf node_modules/rollup/dist/native.js",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx server/migrate.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
