@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { storage } from "./storage"; // Asegúrate de que este import exista
+import { storage } from "./storage.js";
 
 // Extender la interfaz Request para incluir user
 interface AuthenticatedRequest extends Request {
