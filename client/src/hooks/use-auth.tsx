@@ -12,7 +12,7 @@ type AuthContextType = {
   user: SelectUser | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
+  loginMutation: UseMutationResult<{ user: SelectUser; token: string }, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
   changePasswordMutation: UseMutationResult<void, Error, ChangePasswordData>;
@@ -43,8 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (user: SelectUser) => {
-      queryClient.setQueryData(["/api/user"], user);
+    onSuccess: (result: { user: SelectUser; token: string }) => {
+      queryClient.setQueryData(["/api/user"], result.user);
+      localStorage.setItem("token", result.token);
       toast({
         title: "Inicio de sesión exitoso",
         description: "Has iniciado sesión correctamente.",
@@ -86,6 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
+      localStorage.removeItem("token");
       toast({
         title: "Sesión cerrada",
         description: "Has cerrado sesión correctamente.",
