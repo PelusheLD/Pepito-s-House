@@ -1,3 +1,7 @@
+import 'dotenv/config';
+import ws from "ws";
+import { neonConfig } from "@neondatabase/serverless";
+neonConfig.webSocketConstructor = ws;
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import { Pool } from '@neondatabase/serverless';
 import { users, defaultAdmin } from '../shared/schema.js';

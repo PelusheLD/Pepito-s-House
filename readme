@@ -1,0 +1,7 @@
+
+primero isnstala las dependencias yarn
+npm run db:push
+yarn add -D tsx
+yarn add dotenv
+yarn add ws
+yarn tsx server/create-admin.ts

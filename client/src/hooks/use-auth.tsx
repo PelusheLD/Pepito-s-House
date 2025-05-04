@@ -112,20 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/change-password", data);
       return await res.json();
     },
-    onSuccess: (data) => {
-      console.log("Usuario antes de actualizar:", user);
-      if (user) {
-        const updatedUser = {
-          ...user,
-          isFirstLogin: false
-        };
-        console.log("Usuario actualizado:", updatedUser);
-        queryClient.setQueryData(["/api/user"], updatedUser);
-        
-        // Forzar una actualización de la caché
-        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      }
-      
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(["/api/user"], updatedUser);
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Contraseña actualizada",
         description: "Tu contraseña ha sido actualizada correctamente.",

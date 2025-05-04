@@ -385,6 +385,15 @@ export class DatabaseStorage implements IStorage {
   async deleteReservation(id: number): Promise<void> {
     await db.delete(reservations).where(eq(reservations.id, id));
   }
+
+  async validatePassword(username: string, password: string): Promise<boolean> {
+    // Lógica para validar la contraseña
+    return true; // Implementación temporal
+  }
+
+  async updatePassword(username: string, newPassword: string): Promise<void> {
+    // Lógica para actualizar la contraseña
+  }
 }
 
 export const storage = new DatabaseStorage();
