@@ -117,8 +117,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Contraseña actualizada",
-        description: "Tu contraseña ha sido actualizada correctamente.",
+        description: "Tu contraseña ha sido actualizada correctamente. Por favor, vuelve a iniciar sesión.",
       });
+      logoutMutation.mutate();
     },
     onError: (error: Error) => {
       console.error("Error al cambiar contraseña:", error);
