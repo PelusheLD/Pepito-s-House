@@ -253,9 +253,7 @@ export default function AdminPage() {
             </TabsContent>
             
             <TabsContent value="settings">
-              <div className="space-y-6">
-                <SiteSettings />
-              </div>
+              <SiteSettings />
             </TabsContent>
             
             <TabsContent value="staff">

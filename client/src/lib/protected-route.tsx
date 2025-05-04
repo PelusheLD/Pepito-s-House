@@ -10,7 +10,7 @@ export function ProtectedRoute({
   component: () => React.JSX.Element;
 }) {
   const { user, isLoading } = useAuth();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   if (isLoading) {
     return (
@@ -30,8 +30,8 @@ export function ProtectedRoute({
     );
   }
 
-  // Solo redirigir a change-password si es primer login y NO estamos ya en esa página
-  if (user.isFirstLogin && !location.includes("/admin-aut/change-password")) {
+  // Check if it's the first login and user is not already on the password change page
+  if (user.isFirstLogin && !location.includes("change-password")) {
     return (
       <Route path={path}>
         <Redirect to="/admin-aut/change-password" />
