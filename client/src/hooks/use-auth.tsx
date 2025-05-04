@@ -44,8 +44,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (result: { user: SelectUser; token: string }) => {
-      queryClient.setQueryData(["/api/user"], result.user);
-      localStorage.setItem("token", result.token);
+      console.log("LOGIN RESULT", result);
+      if (result && result.token) {
+        localStorage.setItem("token", result.token);
+      }
+      if (result && result.user) {
+        queryClient.setQueryData(["/api/user"], result.user);
+      }
       toast({
         title: "Inicio de sesión exitoso",
         description: "Has iniciado sesión correctamente.",
