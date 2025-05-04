@@ -8,6 +8,22 @@ import {
   insertSocialMediaSchema,
   insertReservationSchema
 } from "../shared/schema.js";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+
+function authenticateJWT(req: Request, res: Response, next: Function) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).json({ message: "No token provided" });
+  const token = authHeader.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    (req as any).user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Token inválido" });
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Express> {
   // Menu items routes
@@ -449,7 +465,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     }
   });
 
-  // Endpoint de login
+  // Endpoint de login con JWT
   app.post("/api/login", async (req, res) => {
     const { username, password } = req.body;
     const user = await storage.getUserByUsername(username);
@@ -458,26 +474,32 @@ export async function registerRoutes(app: Express): Promise<Express> {
       return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
     }
 
-    // Aquí podrías crear la sesión/cookie si usas sesiones
-    // req.session.userId = user.id;
-
     // No devuelvas la contraseña
     const { password: _, ...userWithoutPassword } = user;
-    res.json(userWithoutPassword);
+    const token = jwt.sign(userWithoutPassword, JWT_SECRET, { expiresIn: "2h" });
+    res.json({ user: userWithoutPassword, token });
   });
 
-  // Endpoint para obtener el usuario autenticado
-  app.get("/api/user", async (req, res) => {
-    // Si tuvieras sesiones, aquí buscarías el usuario por req.session.userId
-    // Por ahora, devuelve null (no autenticado)
-    res.json(null);
+  // Endpoint para obtener el usuario autenticado (requiere JWT)
+  app.get("/api/user", authenticateJWT, async (req, res) => {
+    res.json((req as any).user);
   });
 
-  // Endpoint para cerrar sesión
+  // Endpoint para cerrar sesión (opcional con JWT, solo frontend borra el token)
   app.post("/api/logout", (req, res) => {
-    // Si tuvieras sesiones, aquí destruirías la sesión
-    // req.session.destroy();
     res.status(200).json({ message: "Sesión cerrada" });
+  });
+
+  // Endpoint para cambiar contraseña (requiere JWT)
+  app.post("/api/change-password", authenticateJWT, async (req, res) => {
+    const user = (req as any).user;
+    const { currentPassword, newPassword } = req.body;
+    const dbUser = await storage.getUserByUsername(user.username);
+    if (!dbUser || dbUser.password !== currentPassword) {
+      return res.status(401).json({ message: "Contraseña actual incorrecta" });
+    }
+    await storage.updateUser(dbUser.id, { password: newPassword, isFirstLogin: false });
+    res.status(200).json({ message: "Contraseña actualizada correctamente" });
   });
 
   return app;
