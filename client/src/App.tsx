@@ -16,10 +16,7 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/auth" component={AuthPage} />
-      <Route path="/admin-aut">
-        <Redirect to="/auth" />
-      </Route>
-      <ProtectedRoute path="/admin-aut/:section" component={AdminPage} />
+      <ProtectedRoute path="/auth/:section" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );

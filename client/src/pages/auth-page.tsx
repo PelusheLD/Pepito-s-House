@@ -33,9 +33,9 @@ export default function AuthPage() {
   useEffect(() => {
     if (user && !isLoading) {
       if (user.isFirstLogin) {
-        setLocation("/admin-aut/change-password");
+        setLocation("/auth/change-password");
       } else {
-        setLocation("/admin-aut/dashboard");
+        setLocation("/auth/dashboard");
       }
     }
   }, [user, isLoading, setLocation]);
