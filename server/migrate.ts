@@ -4,6 +4,7 @@ import * as schema from '../shared/schema.js';
 import { migrate } from 'drizzle-orm/neon-serverless/migrator';
 import { users, defaultAdmin } from '../shared/schema.js';
 import { eq } from 'drizzle-orm';
+import bcrypt from "bcrypt";
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is not set');
@@ -22,7 +23,8 @@ async function main() {
   
   if (adminUser.length === 0) {
     console.log('Creating default admin user...');
-    await db.insert(users).values(defaultAdmin);
+    const hashedPassword = await bcrypt.hash(defaultAdmin.password, 10);
+    await db.insert(users).values({ ...defaultAdmin, password: hashedPassword });
     console.log('Default admin user created!');
   } else {
     console.log('Admin user already exists');

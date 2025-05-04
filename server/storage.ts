@@ -11,7 +11,7 @@ import type {
   SocialMedia, InsertSocialMedia,
   Reservation, InsertReservation
 } from "../shared/schema.js";
-
+import bcrypt from "bcrypt";
 export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
@@ -92,7 +92,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(user: InsertUser): Promise<User> {
-    const [newUser] = await db.insert(users).values(user).returning();
+    const hashed = await bcrypt.hash(user.password, 10);
+    const [newUser] = await db.insert(users).values({ ...user, password: hashed }).returning();
     return newUser;
   }
 
@@ -387,12 +388,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async validatePassword(username: string, password: string): Promise<boolean> {
-    // Lógica para validar la contraseña
-    return true; // Implementación temporal
+    const user = await this.getUserByUsername(username);
+    if (!user) return false;
+    return await bcrypt.compare(password, user.password);
   }
 
   async updatePassword(username: string, newPassword: string): Promise<void> {
-    // Lógica para actualizar la contraseña
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await db
+      .update(users)
+      .set({ password: hashed })
+      .where(eq(users.username, username));
   }
 }
 

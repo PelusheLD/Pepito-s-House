@@ -9,6 +9,7 @@ import {
   insertReservationSchema
 } from "../shared/schema.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
@@ -470,7 +471,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     const { username, password } = req.body;
     const user = await storage.getUserByUsername(username);
 
-    if (!user || user.password !== password) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Usuario o contraseña incorrectos" });
     }
 
@@ -495,7 +496,7 @@ export async function registerRoutes(app: Express): Promise<Express> {
     const user = (req as any).user;
     const { currentPassword, newPassword } = req.body;
     const dbUser = await storage.getUserByUsername(user.username);
-    if (!dbUser || dbUser.password !== currentPassword) {
+    if (!dbUser || !(await bcrypt.compare(currentPassword, dbUser.password))) {
       return res.status(401).json({ message: "Contraseña actual incorrecta" });
     }
     await storage.updateUser(dbUser.id, { password: newPassword, isFirstLogin: false });

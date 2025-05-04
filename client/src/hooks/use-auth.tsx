@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -37,6 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  const [pathname, setLocation] = useLocation();
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
@@ -114,12 +117,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(["/api/user"], updatedUser);
-      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
       toast({
         title: "Contraseña actualizada",
-        description: "Tu contraseña ha sido actualizada correctamente. Por favor, vuelve a iniciar sesión.",
+        description: "Tu contraseña ha sido actualizada correctamente.",
       });
-      logoutMutation.mutate();
+      setLocation("/");
     },
     onError: (error: Error) => {
       console.error("Error al cambiar contraseña:", error);
@@ -130,6 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     },
   });
+
+  useEffect(() => {
+    if (user?.isFirstLogin && !pathname.includes("/change-password")) {
+      setLocation("/change-password");
+    }
+  }, [user, pathname, setLocation]);
 
   return (
     <AuthContext.Provider
