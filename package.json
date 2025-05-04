@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && npm run build:backend && tsx server/create-admin.ts",
+    "build": "vite build && npm run build:backend",
     "build:backend": "tsc --project tsconfig.server.json",
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "clean": "rm -rf dist",
