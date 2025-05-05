@@ -1,4 +1,5 @@
 import { storage } from '../server/storage';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   if (req.method === 'PUT') {
@@ -8,13 +9,12 @@ export default async function handler(req, res) {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      // Aquí deberías comparar la contraseña (hash)
-      // Por simplicidad, solo compara texto plano (ajusta según tu lógica real)
-      if (user.password !== oldPassword) {
+      const isValid = await bcrypt.compare(oldPassword, user.password);
+      if (!isValid) {
         return res.status(401).json({ message: 'Old password is incorrect' });
       }
-      // Actualizar la contraseña en la base de datos
-      await storage.updateSetting(`user:${username}:password`, newPassword);
+      await storage.updatePassword(username, newPassword);
+      await storage.updateUser(user.id, { isFirstLogin: false });
       return res.status(200).json({ message: 'Password updated successfully' });
     } catch (error) {
       return res.status(500).json({ message: 'Error changing password', error });

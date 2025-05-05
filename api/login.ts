@@ -1,4 +1,5 @@
 import { storage } from '../server/storage';
+import bcrypt from 'bcrypt';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -7,12 +8,12 @@ export default async function handler(req, res) {
     if (!user) {
       return res.status(401).json({ message: 'Usuario no encontrado' });
     }
-    // Aquí deberías comparar la contraseña (hash)
-    // Por simplicidad, solo compara texto plano (ajusta según tu lógica real)
-    if (user.password !== password) {
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
-    return res.status(200).json(user);
+    const { password: _, ...userWithoutPassword } = user;
+    return res.status(200).json(userWithoutPassword);
   }
   res.setHeader('Allow', ['POST']);
   res.status(405).end(`Method ${req.method} Not Allowed`);

@@ -4,7 +4,8 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       const users = await storage.getAllUsers();
-      return res.status(200).json(users);
+      const usersWithoutPasswords = users.map(({ password, ...u }) => u);
+      return res.status(200).json(usersWithoutPasswords);
     } catch (error) {
       return res.status(500).json({ message: 'Error fetching users', error });
     }
@@ -12,7 +13,8 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const newUser = await storage.createUser(req.body);
-      return res.status(201).json(newUser);
+      const { password, ...userWithoutPassword } = newUser;
+      return res.status(201).json(userWithoutPassword);
     } catch (error) {
       return res.status(400).json({ message: 'Error creating user', error });
     }

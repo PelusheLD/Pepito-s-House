@@ -499,7 +499,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
     if (!dbUser || !(await bcrypt.compare(currentPassword, dbUser.password))) {
       return res.status(401).json({ message: "Contraseña actual incorrecta" });
     }
-    await storage.updateUser(dbUser.id, { password: newPassword, isFirstLogin: false });
+    await storage.updatePassword(dbUser.username, newPassword);
+    await storage.updateUser(dbUser.id, { isFirstLogin: false });
     const updatedUser = await storage.getUserByUsername(user.username);
     res.status(200).json(updatedUser);
   });
