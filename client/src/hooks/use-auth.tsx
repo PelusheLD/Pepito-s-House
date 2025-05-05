@@ -121,7 +121,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Contraseña actualizada",
         description: "Tu contraseña ha sido actualizada correctamente.",
       });
-      setLocation("/admin-aut/dashboard");
     },
     onError: (error: Error) => {
       console.error("Error al cambiar contraseña:", error);
