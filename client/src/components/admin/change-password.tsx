@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
@@ -45,6 +45,7 @@ interface ChangePasswordProps {
 export default function ChangePassword({ isFirstLogin = false }: ChangePasswordProps) {
   const { changePasswordMutation } = useAuth();
   const [, setLocation] = useLocation();
+  const [showRedirectMsg, setShowRedirectMsg] = useState(false);
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(passwordChangeSchema),
@@ -59,17 +60,13 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
   useEffect(() => {
     if (changePasswordMutation.isSuccess) {
       form.reset();
-      
-      // Si era el primer inicio de sesión, redirigir al dashboard después de un breve retraso
-      if (isFirstLogin) {
-        setTimeout(() => {
-          // Forzar la actualización de la interfaz antes de redirigir
-          queryClient.invalidateQueries({ queryKey: ['/api/user'] });
-          setLocation("/admin-aut/dashboard");
-        }, 1500);
-      }
+      setShowRedirectMsg(true);
+      setTimeout(async () => {
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+        setLocation('/auth');
+      }, 3000);
     }
-  }, [changePasswordMutation.isSuccess, form, isFirstLogin, setLocation]);
+  }, [changePasswordMutation.isSuccess, form, setLocation]);
 
   const onSubmit = (values: PasswordChangeFormValues) => {
     changePasswordMutation.mutate({
@@ -108,8 +105,8 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
               <CheckCircle2 className="h-5 w-5" />
               <AlertTitle>¡Contraseña actualizada!</AlertTitle>
               <AlertDescription>
-                Tu contraseña ha sido actualizada correctamente.
-                {isFirstLogin && " Serás redirigido al dashboard en unos momentos."}
+                Tu contraseña ha sido actualizada correctamente.<br />
+                Serás redirigido al login en 3 segundos.
               </AlertDescription>
             </Alert>
           )}
