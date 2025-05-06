@@ -351,10 +351,8 @@ export async function registerRoutes(app: Express): Promise<Express> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      await storage.updateUser(id, {
-        password,
-        isFirstLogin: true
-      });
+      await storage.updatePassword(user.username, password);
+      await storage.updateUser(id, { isFirstLogin: true });
       
       res.status(200).json({ message: "Password reset successful" });
     } catch (error) {
