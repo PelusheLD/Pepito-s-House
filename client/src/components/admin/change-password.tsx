@@ -81,6 +81,10 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
     }
   }, [changePasswordMutation.isSuccess, form]);
 
+  useEffect(() => {
+    setShowLogoutModal(false);
+  }, []);
+
   const handleLogout = () => {
     setShowLogoutModal(false);
     logoutMutation.mutate();
