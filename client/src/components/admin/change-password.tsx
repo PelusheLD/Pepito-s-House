@@ -43,7 +43,7 @@ interface ChangePasswordProps {
 }
 
 export default function ChangePassword({ isFirstLogin = false }: ChangePasswordProps) {
-  const { changePasswordMutation } = useAuth();
+  const { changePasswordMutation, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [showRedirectMsg, setShowRedirectMsg] = useState(false);
 
@@ -61,12 +61,12 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
     if (changePasswordMutation.isSuccess) {
       form.reset();
       setShowRedirectMsg(true);
-      setTimeout(async () => {
-        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      setTimeout(() => {
+        logoutMutation.mutate();
         setLocation('/auth');
       }, 3000);
     }
-  }, [changePasswordMutation.isSuccess, form, setLocation]);
+  }, [changePasswordMutation.isSuccess, form, setLocation, logoutMutation]);
 
   const onSubmit = (values: PasswordChangeFormValues) => {
     changePasswordMutation.mutate({
