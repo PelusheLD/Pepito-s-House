@@ -67,7 +67,7 @@ export default function AdminPage() {
   };
 
   const restaurantName = getSettingValue("restaurantName") || "LLAMAS!";
-  const restaurantLogo = getSettingValue("restaurantLogo") || "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww";
+  const restaurantLogo = getSettingValue("restaurantLogo") || "https://png.pngtree.com/png-clipart/20220621/original/pngtree-fire-vector-logo-icon-png-image_8176386.png";
 
   useEffect(() => {
     // Si es primer inicio de sesión, forzar la pestaña de cambio de contraseña

@@ -9,6 +9,10 @@ export default async function handler(req, res) {
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
+      if (!oldPassword) {
+        await storage.updatePassword(username, newPassword);
+        return res.status(200).json({ message: 'Password reset successfully' });
+      }
       const isValid = await bcrypt.compare(oldPassword, user.password);
       if (!isValid) {
         return res.status(401).json({ message: 'Old password is incorrect' });
