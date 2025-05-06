@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Lock, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Lock, AlertTriangle, CheckCircle2, LogOut } from "lucide-react";
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, "La contraseña actual es requerida"),
@@ -42,10 +42,28 @@ interface ChangePasswordProps {
   isFirstLogin?: boolean;
 }
 
+function LogoutModal({ open, onConfirm }: { open: boolean; onConfirm: () => void }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center animate-fade-in">
+        <div className="flex flex-col items-center gap-2 mb-4">
+          <CheckCircle2 className="h-10 w-10 text-green-600 mb-2" />
+          <h2 className="text-xl font-bold mb-1">¡Contraseña actualizada!</h2>
+          <p className="text-gray-600">Por seguridad, tu sesión se cerrará.<br />Haz clic en <b>OK</b> para continuar.</p>
+        </div>
+        <Button onClick={onConfirm} className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700">
+          <LogOut className="h-5 w-5" /> OK, cerrar sesión
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function ChangePassword({ isFirstLogin = false }: ChangePasswordProps) {
   const { changePasswordMutation, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
-  const [showRedirectMsg, setShowRedirectMsg] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(passwordChangeSchema),
@@ -56,17 +74,18 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
     },
   });
 
-  // Reset form when success and handle redirection
   useEffect(() => {
     if (changePasswordMutation.isSuccess) {
       form.reset();
-      setShowRedirectMsg(true);
-      setTimeout(() => {
-        logoutMutation.mutate();
-        setLocation('/auth');
-      }, 3000);
+      setShowLogoutModal(true);
     }
-  }, [changePasswordMutation.isSuccess, form, setLocation, logoutMutation]);
+  }, [changePasswordMutation.isSuccess, form]);
+
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    logoutMutation.mutate();
+    setLocation('/auth');
+  };
 
   const onSubmit = (values: PasswordChangeFormValues) => {
     changePasswordMutation.mutate({
@@ -77,6 +96,7 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
 
   return (
     <div className="max-w-md mx-auto">
+      <LogoutModal open={showLogoutModal} onConfirm={handleLogout} />
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">
@@ -105,8 +125,7 @@ export default function ChangePassword({ isFirstLogin = false }: ChangePasswordP
               <CheckCircle2 className="h-5 w-5" />
               <AlertTitle>¡Contraseña actualizada!</AlertTitle>
               <AlertDescription>
-                Tu contraseña ha sido actualizada correctamente.<br />
-                Serás redirigido al login en 3 segundos.
+                Tu contraseña ha sido actualizada correctamente.
               </AlertDescription>
             </Alert>
           )}
