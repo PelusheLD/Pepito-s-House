@@ -8,6 +8,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MenuSection() {
   const [activeCategory, setActiveCategory] = useState<string | null>("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   // Fetch categories
   const { data: categories, isLoading: isLoadingCategories } = useQuery<Category[]>({
@@ -27,7 +29,17 @@ export default function MenuSection() {
   // Filter items based on active category
   const filteredItems = availableMenuItems?.filter(item => 
     activeCategory === "all" || item.categoryId?.toString() === activeCategory
-  );
+  ) || [];
+
+  // Paginación
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+  const paginatedItems = filteredItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Resetear página al cambiar de categoría
+  function handleCategoryChange(cat: string) {
+    setActiveCategory(cat);
+    setCurrentPage(1);
+  }
 
   return (
     <section id="menu" className="py-16 bg-gradient-to-br from-yellow-50 via-white to-red-50">
@@ -57,7 +69,7 @@ export default function MenuSection() {
                     ? "bg-red-600 text-white font-bold border-2 border-yellow-400 shadow-md hover:bg-yellow-400 hover:text-red-700 transition-all"
                     : "bg-yellow-200 text-red-700 font-bold border-2 border-red-300 hover:bg-red-600 hover:text-white transition-all"
                 }
-                onClick={() => setActiveCategory("all")}
+                onClick={() => handleCategoryChange("all")}
               >
                 Todos
               </Button>
@@ -71,7 +83,7 @@ export default function MenuSection() {
                       ? "bg-red-600 text-white font-bold border-2 border-yellow-400 shadow-md hover:bg-yellow-400 hover:text-red-700 transition-all"
                       : "bg-yellow-200 text-red-700 font-bold border-2 border-red-300 hover:bg-red-600 hover:text-white transition-all"
                   }
-                  onClick={() => setActiveCategory(category.id.toString())}
+                  onClick={() => handleCategoryChange(category.id.toString())}
                 >
                   {category.name}
                 </Button>
@@ -99,8 +111,8 @@ export default function MenuSection() {
                 </div>
               </div>
             ))
-          ) : filteredItems && filteredItems.length > 0 ? (
-            filteredItems.map(item => (
+          ) : paginatedItems && paginatedItems.length > 0 ? (
+            paginatedItems.map(item => (
               <FoodItemCard key={item.id} item={item} />
             ))
           ) : (
@@ -111,6 +123,37 @@ export default function MenuSection() {
             </div>
           )}
         </div>
+        {/* Controles de paginación */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-10">
+            <Button
+              variant="outline"
+              className="font-bold px-3 py-1"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >Anterior</Button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <Button
+                key={i + 1}
+                variant={currentPage === i + 1 ? "default" : "outline"}
+                className={
+                  currentPage === i + 1
+                    ? "bg-red-600 text-white border-yellow-400 font-bold"
+                    : "bg-yellow-200 text-red-700 border-red-300 font-bold"
+                }
+                onClick={() => setCurrentPage(i + 1)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button
+              variant="outline"
+              className="font-bold px-3 py-1"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >Siguiente</Button>
+          </div>
+        )}
       </div>
     </section>
   );

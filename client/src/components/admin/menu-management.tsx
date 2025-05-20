@@ -99,6 +99,8 @@ export default function MenuManagement() {
   const [itemToDelete, setItemToDelete] = useState<MenuItem | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [itemToToggle, setItemToToggle] = useState<MenuItem | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Fetch menu items
   const { 
@@ -287,7 +289,17 @@ export default function MenuManagement() {
   const filteredMenuItems = menuItems?.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) || [];
+
+  // Paginación
+  const totalPages = Math.ceil(filteredMenuItems.length / itemsPerPage);
+  const paginatedMenuItems = filteredMenuItems.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  // Reiniciar página al buscar
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }
 
   const handleEditItem = (item: MenuItem) => {
     setEditingItemId(item.id);
@@ -416,7 +428,7 @@ export default function MenuManagement() {
                     placeholder="Buscar platos..."
                     className="pl-8 w-[200px] md:w-[260px]"
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={handleSearchChange}
                   />
                 </div>
                 <Button 
@@ -448,7 +460,7 @@ export default function MenuManagement() {
                 </div>
               ) : filteredMenuItems && filteredMenuItems.length > 0 ? (
                 <div className="space-y-4">
-                  {filteredMenuItems.map((item) => (
+                  {paginatedMenuItems.map((item) => (
                     <div 
                       key={item.id}
                       className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-md hover:bg-accent/20 transition-colors"
@@ -523,6 +535,37 @@ export default function MenuManagement() {
                       </div>
                     </div>
                   ))}
+                  {/* Controles de paginación */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-8">
+                      <Button
+                        variant="outline"
+                        className="font-bold px-3 py-1"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >Anterior</Button>
+                      {Array.from({ length: totalPages }, (_, i) => (
+                        <Button
+                          key={i + 1}
+                          variant={currentPage === i + 1 ? "default" : "outline"}
+                          className={
+                            currentPage === i + 1
+                              ? "bg-red-600 text-white border-yellow-400 font-bold"
+                              : "bg-yellow-200 text-red-700 border-red-300 font-bold"
+                          }
+                          onClick={() => setCurrentPage(i + 1)}
+                        >
+                          {i + 1}
+                        </Button>
+                      ))}
+                      <Button
+                        variant="outline"
+                        className="font-bold px-3 py-1"
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >Siguiente</Button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-10 text-muted-foreground">
