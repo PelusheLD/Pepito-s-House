@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import { Pool } from '@neondatabase/serverless';
 import * as schema from '../shared/schema.js';
@@ -5,7 +6,6 @@ import { migrate } from 'drizzle-orm/neon-serverless/migrator';
 import { users, defaultAdmin } from '../shared/schema.js';
 import { eq } from 'drizzle-orm';
 import bcrypt from "bcrypt";
-
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is not set');
 }

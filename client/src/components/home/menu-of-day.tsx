@@ -3,6 +3,7 @@ import { MenuItem } from "@shared/schema";
 import { getQueryFn } from "@/lib/queryClient";
 import FoodItemCard from "@/components/food-item-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GiHotDog, GiFullPizza } from "react-icons/gi";
 
 export default function MenuOfDay() {
   const { data: featuredItems, isLoading } = useQuery<MenuItem[]>({
@@ -14,22 +15,25 @@ export default function MenuOfDay() {
   const availableFeaturedItems = featuredItems?.filter(item => item.isAvailable);
 
   return (
-    <section id="menu-del-dia" className="py-16 bg-secondary/20">
+    <section id="menu-del-dia" className="py-16 bg-gradient-to-br from-yellow-100 via-yellow-50 to-red-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-neutral-800 mb-3">
-            Menú del Día
-          </h2>
-          <p className="text-lg text-neutral-800/80 max-w-2xl mx-auto">
-            Nuestra selección especial de hoy, elaborada con ingredientes frescos de temporada.
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <span className="text-3xl text-red-500"><GiHotDog /></span>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-red-600 drop-shadow-lg">
+              Menú del Día
+            </h2>
+            <span className="text-3xl text-yellow-500"><GiFullPizza /></span>
+          </div>
+          <p className="text-lg text-neutral-700 max-w-2xl mx-auto font-semibold">
+            ¡Disfruta nuestra selección especial de hoy, con el mejor sabor de Pepito's House!
           </p>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {isLoading ? (
             // Loading skeletons
             Array(3).fill(0).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div key={i} className="bg-white rounded-3xl shadow-2xl border-2 border-yellow-300 overflow-hidden">
                 <Skeleton className="h-60 w-full" />
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
@@ -51,7 +55,7 @@ export default function MenuOfDay() {
             ))
           ) : (
             <div className="col-span-full text-center py-10">
-              <p className="text-muted-foreground text-lg">
+              <p className="text-red-500 text-xl font-bold">
                 No hay platos destacados disponibles actualmente.
               </p>
             </div>

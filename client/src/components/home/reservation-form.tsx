@@ -120,19 +120,19 @@ export default function ReservationForm() {
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg">
+    <div className="p-8 bg-gradient-to-br from-yellow-50 via-white to-red-50 rounded-3xl shadow-xl border-2 border-yellow-300">
       {success ? (
         <div className="text-center py-8">
-          <CheckCircle className="w-16 h-16 mx-auto mb-4 text-primary" />
-          <h3 className="text-2xl font-bold text-neutral-800 mb-2">¡Reserva Recibida!</h3>
-          <p className="text-neutral-600">
+          <CheckCircle className="w-20 h-20 mx-auto mb-4 text-yellow-500" />
+          <h3 className="text-3xl font-extrabold text-red-600 mb-2">¡Reserva Recibida!</h3>
+          <p className="text-yellow-700 font-semibold">
             Gracias por reservar con nosotros. Te contactaremos pronto para confirmar tu reserva.
           </p>
         </div>
       ) : (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="name"
@@ -277,21 +277,21 @@ export default function ReservationForm() {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mensaje (opcional)</FormLabel>
+                  <FormLabel>Mensaje adicional</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Alguna solicitud especial para su reserva"
-                      className="resize-none"
-                      {...field}
-                    />
+                    <Textarea placeholder="¿Tienes alguna solicitud especial? Escríbela aquí..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Procesando..." : "Reservar Mesa"}
+            <Button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-yellow-400 text-white font-bold text-lg py-3 rounded-full shadow-lg border-2 border-yellow-400 transition-all duration-200"
+              disabled={submitting}
+            >
+              {submitting ? "Enviando..." : "Reservar mesa"}
             </Button>
           </form>
         </Form>

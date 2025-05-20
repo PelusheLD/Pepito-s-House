@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Staff, InsertStaff } from "@shared/schema";
+import { Staff, InsertStaff, Settings } from "@shared/schema";
 import {
   Form,
   FormControl,
@@ -48,6 +48,7 @@ import {
   Save,
   UserRound
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 // Staff form schema
 const staffFormSchema = z.object({
@@ -75,6 +76,27 @@ export default function StaffManagement() {
     queryKey: ["/api/staff"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Obtener settings globales para visibilidad del staff
+  const { data: settings } = useQuery<Settings[]>({
+    queryKey: ["/api/settings"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  const isStaffEnabled = Array.isArray(settings)
+    ? settings.find((s: Settings) => s.key === "isStaffEnabled")?.value === "true"
+    : false;
+  const updateSettingMutation = useMutation({
+    mutationFn: async (value: boolean) => {
+      await apiRequest("PUT", `/api/settings/isStaffEnabled`, { value: String(value) });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/settings"] });
+      toast({ title: "Configuración actualizada", description: "La visibilidad del equipo ha sido actualizada." });
+    }
+  });
+  const handleToggle = (checked: boolean) => {
+    updateSettingMutation.mutate(checked);
+  };
 
   // Form for adding/editing staff
   const form = useForm<StaffFormValues>({
@@ -211,6 +233,14 @@ export default function StaffManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Switch de visibilidad global */}
+      <div className="flex items-center mb-4 border p-4 rounded-lg justify-between bg-accent/20">
+        <div>
+          <span className="font-semibold">Mostrar sección "Nuestro Equipo" en la página principal</span>
+          <p className="text-muted-foreground text-sm">Activa o desactiva la sección pública del equipo.</p>
+        </div>
+        <Switch checked={!!isStaffEnabled} onCheckedChange={handleToggle} disabled={updateSettingMutation.isPending || !settings} />
+      </div>
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-display font-bold mb-2">Gestión de Personal</h2>

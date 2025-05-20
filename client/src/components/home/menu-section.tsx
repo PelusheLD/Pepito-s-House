@@ -30,19 +30,19 @@ export default function MenuSection() {
   );
 
   return (
-    <section id="menu" className="py-16">
+    <section id="menu" className="py-16 bg-gradient-to-br from-yellow-50 via-white to-red-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-neutral-800 mb-3">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-red-600 drop-shadow-lg mb-3">
             Nuestro Menú
           </h2>
-          <p className="text-lg text-neutral-800/80 max-w-2xl mx-auto">
-            Explora nuestra selección de platos preparados con los ingredientes más frescos y las técnicas más refinadas.
+          <p className="text-lg text-neutral-700 max-w-2xl mx-auto font-semibold">
+            ¡Explora nuestra selección de platos irresistibles, preparados con el mejor sabor de Pepito's House!
           </p>
         </div>
 
         {/* Menu Categories */}
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
           {isLoadingCategories ? (
             // Loading skeletons for categories
             Array(5).fill(0).map((_, i) => (
@@ -50,21 +50,26 @@ export default function MenuSection() {
             ))
           ) : (
             <>
-              <Button 
+              <Button
                 variant={activeCategory === "all" ? "default" : "outline"}
-                className={activeCategory === "all" ? "bg-primary text-white" : "bg-neutral-200 text-neutral-800"}
+                className={
+                  activeCategory === "all"
+                    ? "bg-red-600 text-white font-bold border-2 border-yellow-400 shadow-md hover:bg-yellow-400 hover:text-red-700 transition-all"
+                    : "bg-yellow-200 text-red-700 font-bold border-2 border-red-300 hover:bg-red-600 hover:text-white transition-all"
+                }
                 onClick={() => setActiveCategory("all")}
               >
                 Todos
               </Button>
-              
+
               {categories?.map(category => (
                 <Button
                   key={category.id}
                   variant={activeCategory === category.id.toString() ? "default" : "outline"}
-                  className={activeCategory === category.id.toString() 
-                    ? "bg-primary text-white" 
-                    : "bg-neutral-200 text-neutral-800"
+                  className={
+                    activeCategory === category.id.toString()
+                      ? "bg-red-600 text-white font-bold border-2 border-yellow-400 shadow-md hover:bg-yellow-400 hover:text-red-700 transition-all"
+                      : "bg-yellow-200 text-red-700 font-bold border-2 border-red-300 hover:bg-red-600 hover:text-white transition-all"
                   }
                   onClick={() => setActiveCategory(category.id.toString())}
                 >
@@ -74,13 +79,12 @@ export default function MenuSection() {
             </>
           )}
         </div>
-        
         {/* Menu Items Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {isLoadingItems ? (
             // Loading skeletons for menu items
             Array(8).fill(0).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div key={i} className="bg-white rounded-3xl shadow-xl border-2 border-yellow-200 overflow-hidden">
                 <Skeleton className="h-48 w-full" />
                 <div className="p-5">
                   <div className="flex justify-between items-start mb-2">
@@ -101,7 +105,7 @@ export default function MenuSection() {
             ))
           ) : (
             <div className="col-span-full text-center py-10">
-              <p className="text-muted-foreground text-lg">
+              <p className="text-red-500 text-xl font-bold">
                 No hay platos disponibles en esta categoría.
               </p>
             </div>

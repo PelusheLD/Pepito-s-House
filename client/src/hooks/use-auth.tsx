@@ -47,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await res.json();
     },
     onSuccess: (result: { user: SelectUser; token: string }) => {
-      console.log("LOGIN RESULT", result);
       if (typeof window !== "undefined" && result && result.token) {
         localStorage.setItem("token", result.token);
       }
