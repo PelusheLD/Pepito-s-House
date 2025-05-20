@@ -139,7 +139,7 @@ export default function Footer({ logo, restaurantName }: FooterProps) {
               <li className="flex items-start">
                 <Mail className="h-5 w-5 mr-3 text-yellow-500 mt-1" />
                 <span className="text-yellow-700 font-semibold">
-                  {location?.email || "reservas@llamas.com"}
+                  {location?.email || "reservas@Pepito'sHouse.com"}
                 </span>
               </li>
             </ul>

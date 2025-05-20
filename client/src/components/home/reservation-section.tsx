@@ -16,7 +16,7 @@ export default function ReservationSection() {
   };
 
   const isReservationsEnabled = getSettingValue("isReservationsEnabled") === "true";
-  const title = getSettingValue("reservationTitle") || "¡Reserva tu Mesa en LLAMAS!";
+  const title = getSettingValue("reservationTitle") || "¡Reserva tu Mesa en Pepito's House!";
   const description = getSettingValue("reservationDescription") || "Asegura tu lugar en nuestro restaurante completando el siguiente formulario. Nuestro equipo se comunicará contigo para confirmar tu reserva y atender cualquier solicitud especial.";
   const phoneText = getSettingValue("reservationPhoneText") || "¿Prefieres hacer tu reserva por teléfono? Llama al";
   const confirmationText = getSettingValue("reservationConfirmationText") || "Recuerda que todas las reservas requieren confirmación. Te contactaremos vía WhatsApp para verificar los detalles.";

@@ -73,16 +73,16 @@ function getWhatsAppUrl(phone: string, message: string): string {
 
 // Función para generar mensajes de confirmación de reserva
 function generateConfirmationMessage(reservation: Reservation): string {
-  return `Hola ${reservation.name}, ¡tu reserva en LLAMAS ha sido confirmada! Te esperamos el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time} para ${reservation.guests} ${reservation.guests > 1 ? "personas" : "persona"}. Cualquier cambio, por favor avísanos con anticipación. ¡Gracias!`;
+  return `Hola ${reservation.name}, ¡tu reserva en Pepito's House ha sido confirmada! Te esperamos el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time} para ${reservation.guests} ${reservation.guests > 1 ? "personas" : "persona"}. Cualquier cambio, por favor avísanos con anticipación. ¡Gracias!`;
 }
 
 // Función para generar mensajes de cambio de estado de reserva
 function generateStatusChangeMessage(reservation: Reservation, newStatus: string): string {
   const statusMessages = {
-    confirmed: `Hola ${reservation.name}, ¡tu reserva en LLAMAS ha sido confirmada! Te esperamos el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time}.`,
-    "in-progress": `Hola ${reservation.name}, ¡esperamos estés disfrutando tu experiencia en LLAMAS! Si necesitas algo adicional, no dudes en pedirlo a nuestro personal.`,
-    completed: `Hola ${reservation.name}, ¡gracias por visitarnos en LLAMAS! Esperamos que hayas disfrutado tu experiencia. Nos encantaría recibir tus comentarios y verte nuevamente pronto.`,
-    cancelled: `Hola ${reservation.name}, lamentamos informarte que tu reserva en LLAMAS para el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time} ha sido cancelada. Para más información o para reprogramar, por favor contáctanos.`
+    confirmed: `Hola ${reservation.name}, ¡tu reserva en Pepito's House ha sido confirmada! Te esperamos el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time}.`,
+    "in-progress": `Hola ${reservation.name}, ¡esperamos estés disfrutando tu experiencia en Pepito's House! Si necesitas algo adicional, no dudes en pedirlo a nuestro personal.`,
+    completed: `Hola ${reservation.name}, ¡gracias por visitarnos en Pepito's House! Esperamos que hayas disfrutado tu experiencia. Nos encantaría recibir tus comentarios y verte nuevamente pronto.`,
+    cancelled: `Hola ${reservation.name}, lamentamos informarte que tu reserva en Pepito's House para el ${format(parseISO(reservation.date), "d 'de' MMMM", { locale: es })} a las ${reservation.time} ha sido cancelada. Para más información o para reprogramar, por favor contáctanos.`
   };
   
   return statusMessages[newStatus as keyof typeof statusMessages] || "";

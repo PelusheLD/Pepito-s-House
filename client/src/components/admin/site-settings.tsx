@@ -126,12 +126,12 @@ export default function SiteSettings() {
       isReservationsEnabled: true
     },
     values: {
-      restaurantName: getSettingValue("restaurantName") || "LLAMAS!",
+      restaurantName: getSettingValue("restaurantName") || "Pepito's House",
       restaurantLogo: getSettingValue("restaurantLogo") || "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww",
       heroTitle: getSettingValue("heroTitle") || "Una experiencia culinaria inolvidable",
       heroSubtitle: getSettingValue("heroSubtitle") || "Descubre nuestra propuesta gastronómica única, elaborada con los mejores ingredientes frescos y locales.",
       heroImage: getSettingValue("heroImage") || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=80",
-      reservationTitle: getSettingValue("reservationTitle") || "¡Reserva tu Mesa en LLAMAS!",
+      reservationTitle: getSettingValue("reservationTitle") || "¡Reserva tu Mesa en Pepito's House!",
       reservationDescription: getSettingValue("reservationDescription") || "Asegura tu lugar en nuestro restaurante completando el siguiente formulario. Nuestro equipo se comunicará contigo para confirmar tu reserva y atender cualquier solicitud especial.",
       reservationPhoneText: getSettingValue("reservationPhoneText") || "¿Prefieres hacer tu reserva por teléfono? Llama al",
       reservationConfirmationText: getSettingValue("reservationConfirmationText") || "Recuerda que todas las reservas requieren confirmación. Te contactaremos vía WhatsApp para verificar los detalles.",
@@ -174,7 +174,7 @@ export default function SiteSettings() {
     values: {
       address: location?.address || "Av. Principal 123, Ciudad",
       phone: location?.phone || "+1 234 567 890",
-      email: location?.email || "reservas@llamas.com",
+      email: location?.email || "reservas@Pepito'sHouse.com",
       mapCoordinates: location?.mapCoordinates || "",
       hours: parseHours()
     }
@@ -307,7 +307,7 @@ export default function SiteSettings() {
                               <FormItem>
                                 <FormLabel>Nombre del Restaurante</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="LLAMAS!" {...field} />
+                                  <Input placeholder="Pepito's House!" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -458,7 +458,7 @@ export default function SiteSettings() {
                               <FormItem>
                                 <FormLabel>Título de la Sección</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="¡Reserva tu Mesa en LLAMAS!" {...field} />
+                                  <Input placeholder="¡Reserva tu Mesa en Pepito's House!" {...field} />
                                 </FormControl>
                                 <FormDescription>
                                   Título principal de la sección de reservas.
@@ -612,7 +612,7 @@ export default function SiteSettings() {
                               <FormItem>
                                 <FormLabel>Correo Electrónico</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="reservas@llamas.com" {...field} />
+                                  <Input placeholder="reservas@Pepito'sHouse.com" {...field} />
                                 </FormControl>
                                 <FormDescription>
                                   Dirección de correo electrónico para consultas.

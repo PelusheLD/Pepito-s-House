@@ -33,7 +33,7 @@ export default function HomePage() {
     );
   }
 
-  const restaurantName = getSettingValue("restaurantName") || "LLAMAS!";
+  const restaurantName = getSettingValue("restaurantName") || "Pepito's House";
   const restaurantLogo = getSettingValue("restaurantLogo") || "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww";
 
   return (

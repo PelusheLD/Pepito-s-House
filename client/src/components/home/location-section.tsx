@@ -109,7 +109,7 @@ export default function LocationSection() {
                 </p>
                 <p className="text-neutral-700 flex items-center text-lg font-semibold">
                   <Mail className="h-5 w-5 text-red-400 mr-2" />
-                  {location?.email || "reservas@llamas.com"}
+                  {location?.email || "reservas@Pepito'sHouse.com"}
                 </p>
               </div>
             </Card>

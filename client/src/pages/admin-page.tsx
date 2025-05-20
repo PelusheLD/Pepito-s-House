@@ -66,7 +66,7 @@ export default function AdminPage() {
     return setting ? setting.value : "";
   };
 
-  const restaurantName = getSettingValue("restaurantName") || "LLAMAS!";
+  const restaurantName = getSettingValue("restaurantName") || "Pepito'sHouse!";
   const restaurantLogo = getSettingValue("restaurantLogo") || "https://png.pngtree.com/png-clipart/20220621/original/pngtree-fire-vector-logo-icon-png-image_8176386.png";
 
   useEffect(() => {

@@ -123,7 +123,7 @@ export class DatabaseStorage implements IStorage {
       console.log("Default admin user created");
 
       // Initialize default settings
-      await this.updateSetting("restaurantName", "LLAMAS!");
+      await this.updateSetting("restaurantName", "Pepito's House");
       await this.updateSetting("restaurantLogo", "https://images.unsplash.com/photo-1656137002630-6da73c6d5b11?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjB8fGZpcmUlMjBsb2dvfGVufDB8fDB8fHww");
       
       // Create default categories

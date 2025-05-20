@@ -128,7 +128,7 @@ export default function AuthPage() {
             className="w-full h-full object-cover" 
           />
           <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-white p-12 text-center">
-            <h2 className="text-4xl font-display font-bold mb-6">Panel Administrativo LLAMAS!</h2>
+            <h2 className="text-4xl font-display font-bold mb-6">Panel Administrativo Pepito's House!</h2>
             <p className="text-lg">
               Administra tu restaurante, gestiona el menú, actualiza información del personal, y personaliza la experiencia de tus clientes.
             </p>
